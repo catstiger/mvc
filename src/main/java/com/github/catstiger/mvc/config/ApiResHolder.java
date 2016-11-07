@@ -3,19 +3,17 @@ package com.github.catstiger.mvc.config;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-
 import strman.Strman;
 
-public class ApiResHolder {
+public final class ApiResHolder {
   private static Logger logger = LoggerFactory.getLogger(ApiResHolder.class);
   
   private static ConcurrentMap<String, ApiResource> apiMapping = new ConcurrentHashMap<String, ApiResource>(160);
+  private static ApiResHolder instance = null;
   
   public void add(ApiResource apiResource) {
     if(apiResource == null) {
@@ -44,38 +42,26 @@ public class ApiResHolder {
       logger.debug("Required uri is blank.");
       return null;
     }
+    if(uri.endsWith("/")) {
+      uri = Strman.removeRight(uri, "/");
+    }
     
     if(apiMapping.containsKey(uri)) { //直接根据URI返回对应的ApiResource对象
       return apiMapping.get(uri);
-    } else {
-      String[] segments = StringUtils.split(uri, "/");
-      if(ArrayUtils.isEmpty(segments)) {
-        logger.debug("Required uri is blank?");
-        return null;
-      }
-      //如果URI只有一个号段，则缺省的认为service为处理该URI的方法名
-      if(segments.length == 1) {
-        segments = ArrayUtils.add(segments, "service");
-      }
-      //支持下划线，全大写，横杠等命名方式
-      String[] keySegments = new String[2];
-      
-      for(int i = 0; i < 2; i++) {
-        keySegments[i] = Strman.toCamelCase(segments[i]);
-      }
-      
-      String key = Joiner.on("/").join(keySegments);
-      
-      if(apiMapping.containsKey(key)) {
-        apiMapping.put(uri, apiMapping.get(key));
-      }
-      return apiMapping.get(key);
     }
+    
+    return null;
   }
   
-  public static void main(String[] args) {
-    System.out.println(Strman.toCamelCase("CatsTiger"));
-    System.out.println(Strman.toCamelCase("cats_tiger"));
-    System.out.println(Strman.toCamelCase("Cats-Tiger"));
+  public static ApiResHolder getInstance() {
+    if(instance == null) {
+      instance = new ApiResHolder();
+    }
+    
+    return instance;
+  }
+  
+  private ApiResHolder() {
+    
   }
 }
