@@ -8,21 +8,15 @@ import java.lang.reflect.Method;
  *
  */
 public class ApiResource {
-  /**
-   * 如果不是Spring管理的对象，则创建该对象的实例，要求改对象是一个“非可变”的单例对象
-   */
-  public static final String SERVICE_GENERATOR_CREATE = "_create_";
-  /**
-   * 处理器为spring管理的bean
-   */
-  public static final String SERVICE_GENERATOR_SPRING = "_spring_";
-  
   private String uri;
-  private String serviceGenerator;
+  private String uriPrefix;
+  private String uriSufix;
+  private String providerType;
   private String serviceId;
   private String methodName;
-  private Object service;
+  private Object serviceInstance;
   private Method method;
+  private Boolean singleton = true;
   
   /**
    * 对应的URI，MVC系统根据URI找到处理URI的对象和方法
@@ -38,15 +32,15 @@ public class ApiResource {
   
   /**
    * 返回处理改URI的处理器的生成方式。
-   * @see #SERVICE_GENERATOR_CREATE
-   * @see #SERVICE_GENERATOR_SPRING
+   * @see {@link com.github.catstiger.mvc.service.ServiceProvider#SERVICE_PROVIDER_SPRING}
+   * @see {@link com.github.catstiger.mvc.service.ServiceProvider#SERVICE_PROVIDER_CREATE}
    */
-  public String getServiceGenerator() {
-    return serviceGenerator;
+  public String getProviderType() {
+    return providerType;
   }
   
-  public void setServiceGenerator(String serviceGenerator) {
-    this.serviceGenerator = serviceGenerator;
+  public void setProviderType(String providerType) {
+    this.providerType = providerType;
   }
   
   /**
@@ -64,12 +58,12 @@ public class ApiResource {
   /**
    * 处理该URI的service的实例
    */
-  public Object getService() {
-    return service;
+  public Object getServiceInstance() {
+    return serviceInstance;
   }
   
-  public void setService(Object service) {
-    this.service = service;
+  public void setServiceInstance(Object service) {
+    this.serviceInstance = service;
   }
   /**
    * 处理该URI的方法Method对象
@@ -91,5 +85,29 @@ public class ApiResource {
   
   public void setMethodName(String methodName) {
     this.methodName = methodName;
+  }
+
+  public Boolean getSingleton() {
+    return singleton;
+  }
+
+  public void setSingleton(Boolean singleton) {
+    this.singleton = singleton;
+  }
+
+  public String getUriPrefix() {
+    return uriPrefix;
+  }
+
+  public void setUriPrefix(String uriPrefix) {
+    this.uriPrefix = uriPrefix;
+  }
+
+  public String getUriSufix() {
+    return uriSufix;
+  }
+
+  public void setUriSufix(String uriSufix) {
+    this.uriSufix = uriSufix;
   }
 }

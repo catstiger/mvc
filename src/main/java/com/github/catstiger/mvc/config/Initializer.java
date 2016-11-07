@@ -3,11 +3,15 @@ package com.github.catstiger.mvc.config;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -17,9 +21,15 @@ import javax.servlet.ServletConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.github.catstiger.mvc.annotation.Api;
+import com.github.catstiger.mvc.service.ServiceProvider;
 
+import strman.Strman;
+@Component
 public final class Initializer {
   private static Logger logger = LoggerFactory.getLogger(Initializer.class);
   /**
@@ -41,8 +51,116 @@ public final class Initializer {
     
     Set<Class<?>> apiClasses = getClasses(basePackage);
     for(Class<?> clazz : apiClasses) {
-      System.out.println(clazz.getName());
+      List<ApiResource> apiReses = extractResources(clazz);
+      for(ApiResource apiRes : apiReses) {
+        ApiResHolder.getInstance().add(apiRes);
+      }
     }
+  }
+  
+  private List<ApiResource> extractResources(Class<?> clazz) {
+    if(clazz == null) {
+      return Collections.emptyList();
+    }
+    Api classApiAnn = clazz.getAnnotation(Api.class);  
+    if(classApiAnn == null) {
+      return Collections.emptyList();
+    }
+    
+    String serviceId = getServiceId(clazz); //服务ID，Spring注解的beanId或者全限定类名
+    if(StringUtils.isBlank(serviceId)) {
+      return Collections.emptyList();
+    }
+    
+    Boolean isSingleton = (!isSpringBean(clazz) && classApiAnn.singleton());
+    String uriPrefix = classApiAnn.value(); //如果Aai定义了URI前缀，那么使用Api定义的
+    
+    if(StringUtils.isBlank(uriPrefix)) { //如果没有定义，则根据serviceId或者类名确定URL
+      if(isSpringBean(clazz)) {
+        uriPrefix = "/" + Strman.toSnakeCase(serviceId.replaceAll("\\\\|/", " "));
+      } else {
+        uriPrefix = "/" + Strman.toSnakeCase(clazz.getSimpleName());
+      }
+    }
+    //去除结尾的/
+    if(uriPrefix.endsWith("/")) {
+      uriPrefix = Strman.removeRight(uriPrefix, "/");
+    }
+    
+    Method[] methods = clazz.getMethods();
+    List<ApiResource> apiReses = new ArrayList<ApiResource>(methods.length);
+    
+    for(Method method : methods) {
+      Api methodApiAnn = method.getAnnotation(Api.class);
+      if(methodApiAnn == null) {
+        continue;
+      }
+      
+      String uriSufix = classApiAnn.value(); //如果Aai定义了URI后缀，那么使用Api定义的
+      if(StringUtils.isBlank(uriSufix)) {
+        uriSufix = "/" + Strman.toSnakeCase(method.getName());
+      }
+      if(!uriSufix.startsWith("/")) {
+        uriSufix = "/" + uriSufix;
+      }
+      if(uriSufix.endsWith("/")) {
+        uriSufix = Strman.removeRight(uriSufix, "/");
+      }
+      
+      ApiResource apiRes = new ApiResource();
+      apiRes.setMethod(method);
+      apiRes.setMethodName(method.getName());
+      apiRes.setProviderType((isSpringBean(clazz)) ? ServiceProvider.SERVICE_PROVIDER_SPRING : ServiceProvider.SERVICE_PROVIDER_CREATE);
+      apiRes.setServiceId(serviceId);
+      apiRes.setSingleton(isSingleton);
+      apiRes.setUriPrefix(uriPrefix);
+      apiRes.setUriSufix(uriSufix);
+      apiRes.setUri(uriPrefix + uriSufix);
+      
+      apiReses.add(apiRes);
+    }
+    
+    return apiReses;
+  }
+  
+  public static void main(String[] args) {
+    System.out.println(Strman.toSnakeCase("userName"));
+    System.out.println(Strman.toSnakeCase("user name"));
+    System.out.println(Strman.toSnakeCase("user/name\\sam".replaceAll("\\\\|/", " ")));
+  }
+  
+  
+  private Boolean isSpringBean(Class<?> clazz) {
+    return (clazz != null && (clazz.isAnnotationPresent(Component.class) ||clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Repository.class)));
+  }
+  
+  private String getServiceId(Class<?> clazz) {
+    String serviceId = null;
+    if(clazz.isAnnotationPresent(Component.class)) {
+      Component comAnn = clazz.getAnnotation(Component.class);
+      serviceId = comAnn.value();
+      if(StringUtils.isBlank(serviceId)) {
+        serviceId = Strman.toCamelCase(clazz.getSimpleName());
+      }
+    } else if (clazz.isAnnotationPresent(Service.class)) {
+      Service svrAnn = clazz.getAnnotation(Service.class);
+      serviceId = svrAnn.value();
+      if(StringUtils.isBlank(serviceId)) {
+        serviceId = Strman.toCamelCase(clazz.getSimpleName());
+      }
+    } else if (clazz.isAnnotationPresent(Repository.class)) {
+      Repository respAnn = clazz.getAnnotation(Repository.class);
+      serviceId = respAnn.value();
+      if(StringUtils.isBlank(serviceId)) {
+        serviceId = Strman.toCamelCase(clazz.getSimpleName());
+      }
+    }
+    
+    if(null == serviceId) {
+      serviceId = clazz.getName();
+    }
+    
+    return serviceId;
   }
 
   private static Set<Class<?>> getClasses(String pack) {
