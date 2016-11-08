@@ -16,8 +16,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.servlet.ServletConfig;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +39,11 @@ public final class Initializer {
   public Initializer() {
 
   }
-
-  public void loadApiResources(ServletConfig config) {
-    String basePackage = config.getInitParameter(INIT_PARAM_BASE_PACKAGE);
+  /**
+   * 扫描给定package下的所有类，找出提供Rest服务的类，将之对应的URL，类名，服务ID等信息保存在ApiResHolder中
+   * @param basePackage 给出base package,如果为空字符串或者<code>null</code>，则采用缺省包名{@value #DEFAULT_BASE_PACKAGE}
+   */
+  public void loadApiResources(String basePackage) {
     if (StringUtils.isBlank(basePackage)) {
       basePackage = DEFAULT_BASE_PACKAGE;
     }

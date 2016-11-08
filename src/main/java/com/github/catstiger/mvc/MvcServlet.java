@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.github.catstiger.mvc.config.Initializer;
 
@@ -25,8 +27,13 @@ public class MvcServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     System.out.println("Init...");
+    //Init Spring appliction context
+    ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(config.getServletContext());
+    SpringHelper.initApplicationContext(applicationContext);
+    
     Initializer initializer = new Initializer();
-    initializer.loadApiResources(config);
+    String basePackage = config.getInitParameter(Initializer.INIT_PARAM_BASE_PACKAGE);
+    initializer.loadApiResources(basePackage);
   }
 
 }
