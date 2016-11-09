@@ -18,22 +18,25 @@ import com.github.catstiger.mvc.config.Initializer;
 public class MvcServlet extends HttpServlet {
   private static Logger logger = LoggerFactory.getLogger(MvcServlet.class);
 
+  @SuppressWarnings("unchecked")
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     logger.debug("URL {}", request.getRequestURL());
     logger.debug("URI {}", request.getRequestURI());
+    
+    ServletObjectHolder.setRequest(request);
+    ServletObjectHolder.setResponse(response);
+    ServletObjectHolder.setRequestParameters(request.getParameterMap());
   }
 
   @Override
   public void init(ServletConfig config) throws ServletException {
-    System.out.println("Init...");
     //Init Spring appliction context
     ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(config.getServletContext());
     SpringHelper.initApplicationContext(applicationContext);
     
-    Initializer initializer = new Initializer();
-    String basePackage = config.getInitParameter(Initializer.INIT_PARAM_BASE_PACKAGE);
-    initializer.loadApiResources(basePackage);
+    Initializer initializer = Initializer.getInstance();
+    initializer.loadApiResources(config);
   }
 
 }

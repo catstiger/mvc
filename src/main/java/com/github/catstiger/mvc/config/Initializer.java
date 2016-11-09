@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javax.servlet.ServletConfig;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +37,46 @@ public final class Initializer {
    */
   public static final String INIT_PARAM_BASE_PACKAGE = "basePackage";
   public static final String DEFAULT_BASE_PACKAGE = "service";
+  /**
+   * 日期格式
+   */
+  public static final String INIT_PARAM_DATE_FORMAT = "dateFormat";
+  public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+  
+  /**
+   * 时间格式
+   */
+  public static final String INIT_PARAM_TIME_FORMAT = "timeFormate";
+  public static final String DEFAULT_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  
+  /**
+   * 小时格式
+   */
+  public static final String INIT_PARAM_HOUR_FORMAT = "hourFormate";
+  public static final String DEFAULT_HOUR_FORMAT = "yyyy-MM-dd HH";
+  
+  /**
+   * 分钟格式
+   */
+  public static final String INIT_PARAM_MINUTE_FORMAT = "minuteFormate";
+  public static final String DEFAULT_MINUTE_FORMAT = "yyyy-MM-dd HH:ss";
+  
+  private String dateFormat = DEFAULT_DATE_FORMAT;
+  private String hourFormat = DEFAULT_HOUR_FORMAT;
+  private String timeFormat = DEFAULT_TIME_FORMAT;
+  private String minuteFormat = DEFAULT_MINUTE_FORMAT;
+  
+  private static Initializer instance = null;
 
-  public Initializer() {
-
+  private Initializer() {
+  }
+  
+  public static Initializer getInstance() {
+    if(instance == null) {
+      instance = new Initializer();
+    }
+    
+    return instance;
   }
   /**
    * 扫描给定package下的所有类，找出提供Rest服务的类，将之对应的URL，类名，服务ID等信息保存在ApiResHolder中
@@ -57,6 +96,41 @@ public final class Initializer {
       }
     }
   }
+  
+  /**
+   * @see {@link #loadApiResources(String)}
+   */
+  public void loadApiResources(ServletConfig config) {
+    String basePackage = config.getInitParameter(INIT_PARAM_BASE_PACKAGE);
+    loadApiResources(basePackage);
+  }
+  
+  /**
+   * 加载初始化参数
+   */
+  public void initParams(ServletConfig config) {
+    dateFormat = config.getInitParameter(INIT_PARAM_DATE_FORMAT);
+    if(StringUtils.isBlank(dateFormat)) {
+      dateFormat = DEFAULT_DATE_FORMAT;
+    }
+    
+    hourFormat = config.getInitParameter(INIT_PARAM_HOUR_FORMAT);
+    if(StringUtils.isBlank(hourFormat)) {
+      hourFormat = DEFAULT_HOUR_FORMAT;
+    }
+    
+    timeFormat = config.getInitParameter(INIT_PARAM_TIME_FORMAT);
+    if(StringUtils.isBlank(timeFormat)) {
+      timeFormat = DEFAULT_TIME_FORMAT;
+    }
+    
+    minuteFormat = config.getInitParameter(INIT_PARAM_MINUTE_FORMAT);
+    if(StringUtils.isBlank(minuteFormat)) {
+      minuteFormat = DEFAULT_MINUTE_FORMAT;
+    }
+  }
+  
+  
   
   private List<ApiResource> extractResources(Class<?> clazz) {
     if(clazz == null) {
@@ -123,12 +197,8 @@ public final class Initializer {
     return apiReses;
   }
   
-  public static void main(String[] args) {
-    System.out.println(Strman.toSnakeCase("userName"));
-    System.out.println(Strman.toSnakeCase("user name"));
-    System.out.println(Strman.toSnakeCase("user/name\\sam".replaceAll("\\\\|/", " ")));
-  }
   
+    
   
   private Boolean isSpringBean(Class<?> clazz) {
     return (clazz != null && (clazz.isAnnotationPresent(Component.class) ||clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Repository.class)));
@@ -293,6 +363,33 @@ public final class Initializer {
     }
     Api apiAnn = clazz.getAnnotation(Api.class);
     return apiAnn != null;
+  }
+  /**
+   * 得到系统中使用的日期格式，缺省为{@value #DEFAULT_DATE_FORMAT}，可以在Servlet init param中用参数{@value #INIT_PARAM_DATE_FORMAT}配置
+   */
+  public String getDateFormat() {
+    return dateFormat;
+  }
+  
+  /**
+   * 得到系统中使用的小时格式，缺省为{@value #DEFAULT_HOUR_FORMAT}，可以在Servlet init param中用参数{@value #INIT_PARAM_HOUR_FORMAT}配置
+   */
+  public String getHourFormat() {
+    return hourFormat;
+  }
+  
+  /**
+   * 得到系统中使用的小时格式，缺省为{@value #DEFAULT_TIME_FORMAT}，可以在Servlet init param中用参数{@value #INIT_PARAM_TIME_FORMAT}配置
+   */
+  public String getTimeFormat() {
+    return timeFormat;
+  }
+  
+  /**
+   * 得到系统中使用的小时格式，缺省为{@value #DEFAULT_MINUTE_FORMAT}，可以在Servlet init param中用参数{@value #INIT_PARAM_MINUTE_FORMAT}配置
+   */
+  public String getMinuteFormat() {
+    return minuteFormat;
   }
 
 }

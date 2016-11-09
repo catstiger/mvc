@@ -1,15 +1,17 @@
 package com.github.catstiger.mvc.converter;
 
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 
-public class DoubleValueConverter implements ValueConverter<Double> {
+public class DoubleValueConverter extends PrimitiveConverter<Double> {
 
   @Override
-  public Double stringToObject(String strValue) {
-    if(NumberUtils.isNumber(strValue)) {
-      return Double.parseDouble(strValue);
+  public Double convert(Object value) {
+    if(value == null) {
+      return null;
     }
-    return null;
+    
+    String trimmed = StringUtils.trimToEmpty(value.toString());
+    return new Double(trimmed);
   }
 
 }

@@ -1,13 +1,17 @@
 package com.github.catstiger.mvc.converter;
 
-//import org.springframework.util.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 
-public class ShortValueConverter implements ValueConverter<Short> {
+public class ShortValueConverter extends PrimitiveConverter<Short> {
 
   @Override
-  public Short stringToObject(String strValue) {
-    //NumberUtils.parseNumber(text, targetClass)
-    return null;
+  public Short convert(Object value) {
+    if(value == null) {
+      return null;
+    }
+    
+    String trimmed = StringUtils.trimToEmpty(value.toString());
+    return (isHexNumber(trimmed) ? Short.decode(trimmed) : Short.valueOf(trimmed));
   }
 
 }

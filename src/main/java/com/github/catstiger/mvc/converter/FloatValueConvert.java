@@ -1,15 +1,17 @@
 package com.github.catstiger.mvc.converter;
 
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 
-public class FloatValueConvert implements ValueConverter<Float> {
+public class FloatValueConvert extends PrimitiveConverter<Float> {
 
   @Override
-  public Float stringToObject(String strValue) {
-    if(NumberUtils.isNumber(strValue)) {
-      return Float.parseFloat(strValue);
+  public Float convert(Object value) {
+    if(value == null) {
+      return null;
     }
-    return null;
+    
+    String trimmed = StringUtils.trimToEmpty(value.toString());
+    return new Float(trimmed);
   }
 
 }
