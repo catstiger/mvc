@@ -5,9 +5,12 @@ import java.lang.reflect.Parameter;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.config.ApiResource;
+import com.github.catstiger.mvc.converter.ConverterFactory;
+import com.github.catstiger.mvc.converter.ValueConverter;
 import com.github.catstiger.mvc.service.ServiceProvider;
 import com.github.catstiger.mvc.service.ServiceProviderFactory;
 
@@ -48,13 +51,35 @@ public abstract class ServiceInvoker {
       realMethod = method;
     }
     
-    Object[] args = new Object[method.getParameterTypes().length];
     Parameter[] params = realMethod.getParameters();
-    for(Parameter param : params) {
-      String paramName = getParameterName(param);
+    Object[] args = new Object[params.length];
+    for(int i = 0; i < params.length; i++) {
+      Object value = getParamValue(params[i], cascadedParams);
+      args[i] = value;
     }
         
     return null;
+  }
+  
+  private static Object getParamValue(Parameter parameter, Map<String, Object> cascadedParams) {
+    if(CollectionUtils.isEmpty(cascadedParams)) {
+      return null;
+    }
+    String paramName = getParameterName(parameter);
+    Object value = cascadedParams.get(paramName);
+    if(value == null) {
+      return null;
+    }
+    Class<?> paramType = parameter.getType();
+    Class<?> elementType = null;
+    
+    Param param = parameter.getAnnotation(Param.class);
+    if(param != null && param.elementType() != null) {
+      elementType = param.elementType();
+    }
+    
+    ValueConverter<?> converter = ConverterFactory.getConverter(paramType, elementType);
+    return converter.convert(value);
   }
   
   private static String getParameterName(Parameter parameter) {
