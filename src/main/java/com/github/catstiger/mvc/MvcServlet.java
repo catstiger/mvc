@@ -1,6 +1,7 @@
 package com.github.catstiger.mvc;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,6 +24,7 @@ public class MvcServlet extends HttpServlet {
   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     logger.debug("URL {}", request.getRequestURL());
     logger.debug("URI {}", request.getRequestURI());
+    logger.debug("ACTION {}", request.getRequestURI().replace(request.getContextPath(), ""));
     
     ServletObjectHolder.setRequest(request);
     ServletObjectHolder.setResponse(response);
@@ -31,6 +33,15 @@ public class MvcServlet extends HttpServlet {
 
   @Override
   public void init(ServletConfig config) throws ServletException {
+    logger.debug("ServletContextName {}", config.getServletContext().getServletContextName());
+    logger.debug("getServletContextName {}", config.getServletContext().getServletContextName());
+    logger.debug("getContextPath {}", config.getServletContext().getContextPath());
+    try {
+      logger.debug("getContextPath {}", config.getServletContext().getResource("/"));
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    
     //Init Spring appliction context
     ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(config.getServletContext());
     SpringHelper.initApplicationContext(applicationContext);

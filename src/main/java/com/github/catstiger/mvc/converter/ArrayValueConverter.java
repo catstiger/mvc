@@ -1,26 +1,25 @@
 package com.github.catstiger.mvc.converter;
 
-import org.apache.commons.lang3.ArrayUtils;
+import java.lang.reflect.Array;
+
+import org.apache.commons.lang3.ClassUtils;
 
 /**
- * 
+ * 数组转换
  * @author catstiger
  *
  */
-public class ArrayValueConverter extends MultiObjectValueConverter<Object[]> {
+public class ArrayValueConverter implements ValueConverter<Object> {
+  private Class<?> elementType;
   
-  /**
-   * 构造一个新的ArrayValueConverter
-   * @param typeOfElement 目标数组中每一个元素的类型
-   */
   public ArrayValueConverter(Class<?> elementType) {
-    super(elementType);
+    this.elementType = elementType;
   }
 
   @Override
-  public Object[] convert(Object value) {
+  public Object convert(Object value) {
     if(value == null) {
-      return ArrayUtils.EMPTY_OBJECT_ARRAY;
+      return null;
     }
     Object[] array;
     if(value.getClass().isArray()) {
@@ -30,16 +29,20 @@ public class ArrayValueConverter extends MultiObjectValueConverter<Object[]> {
     }
     
     if(array == null || array.length == 0) {
-      return ArrayUtils.EMPTY_OBJECT_ARRAY;
+      return null;
     }
     
-    Object[] results = new Object[array.length];
-    ValueConverter<?> valueConverter = ConverterFactory.getConverter(getElementType());
+    Class<?> componentType = elementType;
+    if(elementType.isPrimitive()) { //原始数据类型使用包装类来获取转换器
+      componentType = ClassUtils.primitiveToWrapper(elementType);
+    }
+    ValueConverter<?> valueConverter = ConverterFactory.getConverter(componentType);
+    Object results = Array.newInstance(elementType, array.length);
     
     for(int i = 0; i < array.length; i++) {
-      results[i] = valueConverter.convert(array[i]);
+      Object obj = valueConverter.convert(array[i]);
+      Array.set(results, i, obj);
     }
-    
     return results;
   }
 }

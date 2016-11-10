@@ -61,10 +61,28 @@ public final class Initializer {
   public static final String INIT_PARAM_MINUTE_FORMAT = "minuteFormate";
   public static final String DEFAULT_MINUTE_FORMAT = "yyyy-MM-dd HH:ss";
   
+  /**
+   * URI前缀，例如web.xml中url-pattern为/a/*，那么uriPrefix为"/a"
+   */
+  public static final String INIT_PARAM_URI_PREFIX = "uriPrefix";
+  public static final String DEFAULT_URI_PREFIX = "";
+  
+  /**
+   * URL后缀，例如,web.xml中配置url-pattern为/a/*.htm,那么suiSuffix为.htm
+   */
+  public static final String INIT_PARAM_URI_SUFFIX = "uriSuffix";
+  public static final String DEFAULT_URI_SUFFIX = "";
+  
+  public static final String INIT_PARAM_PAGE_FOLDER = "pageFolder";
+  public static final String DEFAULT_PAGE_FOLDER = "/WEB-INF/views";
+  
   private String dateFormat = DEFAULT_DATE_FORMAT;
   private String hourFormat = DEFAULT_HOUR_FORMAT;
   private String timeFormat = DEFAULT_TIME_FORMAT;
   private String minuteFormat = DEFAULT_MINUTE_FORMAT;
+  private String uriPrefix = DEFAULT_URI_PREFIX;
+  private String uriSuffix = DEFAULT_URI_SUFFIX;
+  private String pageFolder = DEFAULT_PAGE_FOLDER;
   
   private static Initializer instance = null;
 
@@ -128,6 +146,21 @@ public final class Initializer {
     if(StringUtils.isBlank(minuteFormat)) {
       minuteFormat = DEFAULT_MINUTE_FORMAT;
     }
+    
+    uriPrefix = config.getInitParameter(INIT_PARAM_URI_PREFIX);
+    if(StringUtils.isBlank(uriPrefix)) {
+      uriPrefix = DEFAULT_URI_PREFIX;
+    }
+    
+    uriSuffix = config.getInitParameter(INIT_PARAM_URI_SUFFIX);
+    if(StringUtils.isBlank(uriSuffix)) {
+      uriSuffix = DEFAULT_URI_SUFFIX;
+    }
+    
+    pageFolder = config.getInitParameter(INIT_PARAM_PAGE_FOLDER);
+    if(StringUtils.isBlank(pageFolder)) {
+      pageFolder = DEFAULT_PAGE_FOLDER;
+    }
   }
   
   
@@ -183,6 +216,7 @@ public final class Initializer {
       
       ApiResource apiRes = new ApiResource();
       apiRes.setMethod(method);
+      //apiRes.setMethod(null);
       apiRes.setMethodName(method.getName());
       apiRes.setProviderType((isSpringBean(clazz)) ? ServiceProvider.SERVICE_PROVIDER_SPRING : ServiceProvider.SERVICE_PROVIDER_CREATE);
       apiRes.setServiceId(serviceId);
@@ -390,6 +424,18 @@ public final class Initializer {
    */
   public String getMinuteFormat() {
     return minuteFormat;
+  }
+
+  public String getUriPrefix() {
+    return uriPrefix;
+  }
+
+  public String getUriSuffix() {
+    return uriSuffix;
+  }
+
+  public String getPageFolder() {
+    return pageFolder;
   }
 
 }

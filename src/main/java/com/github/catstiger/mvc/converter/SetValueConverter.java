@@ -1,26 +1,30 @@
 package com.github.catstiger.mvc.converter;
 
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
+import org.springframework.util.CollectionUtils;
 
-public class SetValueConverter extends MultiObjectValueConverter<Set<?>> {
+public class SetValueConverter implements ValueConverter<Set<?>>{
   private ArrayValueConverter arrayValueConverter;
-
-  public SetValueConverter(Class<?> elementType) {
-    super(elementType);
-    arrayValueConverter = new ArrayValueConverter(elementType);
-  }
+  private Class<?> elementType;
   
+  public SetValueConverter(Class<?> elementType) {
+    this.elementType = elementType;
+    this.arrayValueConverter = new ArrayValueConverter(this.elementType);
+  }
+
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public Set<?> convert(Object value) {
-    Object[] objects = arrayValueConverter.convert(value);
-    if(objects == null || objects.length == 0) {
-      return Collections.emptySet();
-    }
+    Object results = arrayValueConverter.convert(value);
     
-    return Sets.newHashSet(objects);
+    List list = CollectionUtils.arrayToList(results);
+    Set set = new HashSet(list.size());
+    set.addAll(list);
+    
+    return set;
   }
 
 }

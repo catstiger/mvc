@@ -1,26 +1,23 @@
 package com.github.catstiger.mvc.converter;
 
-import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.springframework.util.CollectionUtils;
 
-public class ListValueConverter extends MultiObjectValueConverter<List<?>> {
+public class ListValueConverter implements ValueConverter<List<?>>{
   private ArrayValueConverter arrayValueConverter;
-
-  public ListValueConverter(Class<?> elementType) {
-    super(elementType);
-    arrayValueConverter = new ArrayValueConverter(elementType);
-  }
+  private Class<?> elementType;
   
+  public ListValueConverter(Class<?> elementType) {
+    this.elementType = elementType;
+    this.arrayValueConverter = new ArrayValueConverter(this.elementType);
+  }
+
   @Override
   public List<?> convert(Object value) {
-    Object[] objects = arrayValueConverter.convert(value);
-    if(objects == null || objects.length == 0) {
-      return Collections.emptyList();
-    }
+    Object results = arrayValueConverter.convert(value);
     
-    return Lists.newArrayList(objects);
+    return CollectionUtils.arrayToList(results);
   }
 
 }

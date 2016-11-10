@@ -1,174 +1,223 @@
 package com.github.catstiger.mvc.util;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestWrapper;
-import javax.servlet.ServletResponse;
-import javax.servlet.ServletResponseWrapper;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+
+import com.google.common.net.HttpHeaders;
 
 public final class RequestUtils {
   /**
-   * Return an appropriate request object of the specified type, if available,
-   * unwrapping the given request as far as necessary.
-   * @param request the servlet request to introspect
-   * @param requiredType the desired type of request object
-   * @return the matching request object, or {@code null} if none
-   * of that type is available
+   * 根据Request信息判断是否是请求一个json对象。Header的x-requested-with属性如果
+   * 为XMLHttpRequest，则直接返回<code>true</code>。
+   * Header的Accept属性中如果包含application/x-json或text/x-json,则表示请求json对象。如果Request
+   * 的参数Accept为x-json，也表示请求一个json对象。客户端可以这样设置：
+   * <pre>
+   * XMLHttpRequest xhr = ...;
+   * xhr.setHeader("Accept", "text/x-json;charset=UTF-8");
+   * </pre>
+   * 如果使用extjs<br>
+   * <pre>
+   * Ext.Ajax.defaultHeaders = {
+    'Accept': 'application/x-json;text/x-json;charset=UTF-8'
+    };
+   * </pre>
+   * 如果使用jquery:<br>
+   * <pre>
+   * $.ajax({ url:'user/index.do',
+   *      data: {'model.name':'sam'},
+   *      async: true,
+   *      <B>beforeSend: function(xhr) {xhr.setRequestHeader('Accept': 'application/x-json;text/x-json;charset=UTF-8');}</B>
+   * });
+   * </pre> 
+   * 如果不使用Ajax 方式:<br>
+   * <pre>
+   * your-url.jsp?Accept=x-json&..
+   * </pre>
+   * @return
    */
-  @SuppressWarnings("unchecked")
-  public static <T> T getNativeRequest(ServletRequest request, Class<T> requiredType) {
-    if (requiredType != null) {
-      if (requiredType.isInstance(request)) {
-        return (T) request;
-      }
-      else if (request instanceof ServletRequestWrapper) {
-        return getNativeRequest(((ServletRequestWrapper) request).getRequest(), requiredType);
-      }
+  public static boolean isJsonRequest(HttpServletRequest request) {   
+   
+    //首先验证x-requested-with参数
+    String reqWith = request.getHeader("x-requested-with");
+    if(reqWith != null && reqWith.toLowerCase().endsWith( "XMLHttpRequest".toLowerCase())) {
+      return true;
     }
-    return null;
-  }
-  
-  /**
-   * Return an appropriate response object of the specified type, if available,
-   * unwrapping the given response as far as necessary.
-   * @param response the servlet response to introspect
-   * @param requiredType the desired type of response object
-   * @return the matching response object, or {@code null} if none
-   * of that type is available
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> T getNativeResponse(ServletResponse response, Class<T> requiredType) {
-    if (requiredType != null) {
-      if (requiredType.isInstance(response)) {
-        return (T) response;
-      }
-      else if (response instanceof ServletResponseWrapper) {
-        return getNativeResponse(((ServletResponseWrapper) response).getResponse(), requiredType);
-      }
-    }
-    return null;
-  }
-  
-  /**
-   * Retrieve the first cookie with the given name. Note that multiple
-   * cookies can have the same name but different paths or domains.
-   * @param request current servlet request
-   * @param name cookie name
-   * @return the first cookie with the given name, or {@code null} if none is found
-   */
-  public static Cookie getCookie(HttpServletRequest request, String name) {
-    if(request == null) {
-      throw new java.lang.IllegalArgumentException("Request must not be null.");
+    //AngularJS
+    reqWith = request.getHeader("access-control-request-headers");
+    if(reqWith != null && reqWith.indexOf("x-requested-with") >= 0) {
+      return true;
     }
     
-    Cookie cookies[] = request.getCookies();
-    if (cookies != null) {
-      for (Cookie cookie : cookies) {
-        if (name.equals(cookie.getName())) {
-          return cookie;
-        }
+    //Apicloud 的$api请求
+    reqWith = request.getHeader("user-agent");
+    if(reqWith != null && reqWith.toLowerCase().indexOf("apicloud") >=0){
+      return true;
+    }
+    //Apicloud中的$.ajax请求
+    reqWith = request.getHeader("x-requested-with");
+    if(reqWith != null && reqWith.toLowerCase().indexOf("com.apicloud.apploader") >=0){
+      return true;
+    }
+    
+    //然后验证Accept参数
+    String accept = request.getHeader("Accept");
+    if(StringUtils.isBlank(accept)) {
+      accept = request.getParameter("Accept");
+      if(StringUtils.isBlank(accept)) {
+        return false;
       }
     }
-    return null;
+
+    accept = accept.toLowerCase();
+    return (accept.indexOf("x-json") >= 0);    
   }
   
   /**
-   * Obtain a named parameter from the given request parameters.
-   * <p>See {@link #findParameterValue(java.util.Map, String)}
-   * for a description of the lookup algorithm.
-   * @param request current HTTP request
-   * @param name the <i>logical</i> name of the request parameter
-   * @return the value of the parameter, or {@code null}
-   * if the parameter does not exist in given request
+   * 取得带相同前缀的Request Parameters, copy from spring WebUtils.
+   * 
+   * 返回的结果的Parameter名已去除前缀.
    */
-  @SuppressWarnings("unchecked")
-  public static String findParameterValue(ServletRequest request, String name) {
-    return findParameterValue(request.getParameterMap(), name);
-  }
-
-  /**
-   * Obtain a named parameter from the given request parameters.
-   * <p>This method will try to obtain a parameter value using the
-   * following algorithm:
-   * <ol>
-   * <li>Try to get the parameter value using just the given <i>logical</i> name.
-   * This handles parameters of the form <tt>logicalName = value</tt>. For normal
-   * parameters, e.g. submitted using a hidden HTML form field, this will return
-   * the requested value.</li>
-   * <li>Try to obtain the parameter value from the parameter name, where the
-   * parameter name in the request is of the form <tt>logicalName_value = xyz</tt>
-   * with "_" being the configured delimiter. This deals with parameter values
-   * submitted using an HTML form submit button.</li>
-   * <li>If the value obtained in the previous step has a ".x" or ".y" suffix,
-   * remove that. This handles cases where the value was submitted using an
-   * HTML form image button. In this case the parameter in the request would
-   * actually be of the form <tt>logicalName_value.x = 123</tt>. </li>
-   * </ol>
-   * @param parameters the available parameter map
-   * @param name the <i>logical</i> name of the request parameter
-   * @return the value of the parameter, or {@code null}
-   * if the parameter does not exist in given request
-   */
-  public static String findParameterValue(Map<String, ?> parameters, String name) {
-    // First try to get it as a normal name=value parameter
-    Object value = parameters.get(name);
-    if (value instanceof String[]) {
-      String[] values = (String[]) value;
-      return (values.length > 0 ? values[0] : null);
-    } else if (value != null) {
-      return value.toString();
-    }
-    
-    // We couldn't find the parameter value...
-    return null;
-  }
-
-  /**
-   * Return a map containing all parameters with the given prefix.
-   * Maps single values to String and multiple values to String array.
-   * <p>For example, with a prefix of "spring_", "spring_param1" and
-   * "spring_param2" result in a Map with "param1" and "param2" as keys.
-   * @param request HTTP request in which to look for parameters
-   * @param prefix the beginning of parameter names
-   * (if this is null or the empty string, all parameters will match)
-   * @return map containing request parameters <b>without the prefix</b>,
-   * containing either a String or a String array as values
-   * @see javax.servlet.ServletRequest#getParameterNames
-   * @see javax.servlet.ServletRequest#getParameterValues
-   * @see javax.servlet.ServletRequest#getParameterMap
-   */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public static Map<String, Object> getParametersStartingWith(ServletRequest request, String prefix) {
-    if(request == null) {
-      throw new java.lang.IllegalArgumentException("Request must not be null");
-    }
-    Enumeration<String> paramNames = request.getParameterNames();
-    Map<String, Object> params = new TreeMap<>();
+    Assert.notNull(request, "Request must not be null");
+    Enumeration paramNames = request.getParameterNames();
+    Map<String, Object> params = new TreeMap<String, Object>();
     if (prefix == null) {
       prefix = "";
     }
     while (paramNames != null && paramNames.hasMoreElements()) {
-      String paramName = paramNames.nextElement();
+      String paramName = (String) paramNames.nextElement();
       if ("".equals(prefix) || paramName.startsWith(prefix)) {
         String unprefixed = paramName.substring(prefix.length());
         String[] values = request.getParameterValues(paramName);
         if (values == null || values.length == 0) {
           // Do nothing, no values found at all.
-        }
-        else if (values.length > 1) {
+        } else if (values.length > 1) {
           params.put(unprefixed, values);
-        }
-        else {
+        } else {
           params.put(unprefixed, values[0]);
         }
       }
     }
     return params;
+  }
+  
+  /**
+   * 设置客户端缓存过期时间 的Header.
+   */
+  public static void setExpiresHeader(HttpServletResponse response, long expiresSeconds) {
+    // Http 1.0 header, set a fix expires date.
+    response.setDateHeader(HttpHeaders.EXPIRES, System.currentTimeMillis() + expiresSeconds * 1000);
+    // Http 1.1 header, set a time after now.
+    response.setHeader(HttpHeaders.CACHE_CONTROL, "private, max-age=" + expiresSeconds);
+  }
+
+  /**
+   * 设置禁止客户端缓存的Header.
+   */
+  public static void setNoCacheHeader(HttpServletResponse response) {
+    // Http 1.0 header
+    response.setDateHeader(HttpHeaders.EXPIRES, 1L);
+    response.addHeader(HttpHeaders.PRAGMA, "no-cache");
+    // Http 1.1 header
+    response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, max-age=0");
+  }
+  /**
+   * 设置让浏览器弹出下载对话框的Header.
+   * 
+   * @param fileName 下载后的文件名.
+   */
+  public static void setFileDownloadHeader(HttpServletResponse response, String fileName) {
+    setFileDownloadHeader(response, fileName, "ISO8859-1");
+  }
+  
+  /**
+   * 设置让浏览器弹出下载对话框的Header.
+   * 
+   * @param fileName 下载后的文件名.
+   */
+  public static void setFileDownloadHeader(HttpServletResponse response, String fileName, String encoding) {
+    try {
+      // 中文文件名支持
+      String encodedfileName = new String(fileName.getBytes(), encoding);
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedfileName + "\"");
+    } catch (UnsupportedEncodingException e) {
+    }
+  }
+  
+
+  /**
+   * 设置LastModified Header.
+   */
+  public static void setLastModifiedHeader(HttpServletResponse response, long lastModifiedDate) {
+    response.setDateHeader(HttpHeaders.LAST_MODIFIED, lastModifiedDate);
+  }
+
+  /**
+   * 设置Etag Header.
+   */
+  public static void setEtag(HttpServletResponse response, String etag) {
+    response.setHeader(HttpHeaders.ETAG, etag);
+  }
+
+  /**
+   * 根据浏览器If-Modified-Since Header, 计算文件是否已被修改.
+   * 
+   * 如果无修改, checkIfModify返回false ,设置304 not modify status.
+   * 
+   * @param lastModified 内容的最后修改时间.
+   */
+  public static boolean checkIfModifiedSince(HttpServletRequest request, HttpServletResponse response,
+      long lastModified) {
+    long ifModifiedSince = request.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE);
+    if ((ifModifiedSince != -1) && (lastModified < ifModifiedSince + 1000)) {
+      response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 根据浏览器 If-None-Match Header, 计算Etag是否已无效.
+   * 
+   * 如果Etag有效, checkIfNoneMatch返回false, 设置304 not modify status.
+   * 
+   * @param etag 内容的ETag.
+   */
+  public static boolean checkIfNoneMatchEtag(HttpServletRequest request, HttpServletResponse response, String etag) {
+    String headerValue = request.getHeader(HttpHeaders.IF_NONE_MATCH);
+    if (headerValue != null) {
+      boolean conditionSatisfied = false;
+      if (!"*".equals(headerValue)) {
+        StringTokenizer commaTokenizer = new StringTokenizer(headerValue, ",");
+
+        while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
+          String currentToken = commaTokenizer.nextToken();
+          if (currentToken.trim().equals(etag)) {
+            conditionSatisfied = true;
+          }
+        }
+      } else {
+        conditionSatisfied = true;
+      }
+
+      if (conditionSatisfied) {
+        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        response.setHeader(HttpHeaders.ETAG, etag);
+        return false;
+      }
+    }
+    return true;
   }
   
   private RequestUtils() {
