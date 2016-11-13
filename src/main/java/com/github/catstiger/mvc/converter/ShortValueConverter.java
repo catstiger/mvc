@@ -11,6 +11,9 @@ public class ShortValueConverter extends PrimitiveConverter<Short> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
+    if(isNull(trimmed)) {
+      return null;
+    }
     return (isHexNumber(trimmed) ? Short.decode(trimmed) : Short.valueOf(trimmed));
   }
 

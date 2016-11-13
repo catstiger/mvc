@@ -2,7 +2,7 @@ package com.github.catstiger.mvc.converter;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class BooleanValueConverter implements ValueConverter<Boolean> {
+public class BooleanValueConverter extends PrimitiveConverter<Boolean> {
 
   @Override
   public Boolean convert(Object value) {
@@ -11,6 +11,9 @@ public class BooleanValueConverter implements ValueConverter<Boolean> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
+    if(isNull(trimmed)) {
+      return null;
+    }
     return new Boolean(trimmed);
   }
 

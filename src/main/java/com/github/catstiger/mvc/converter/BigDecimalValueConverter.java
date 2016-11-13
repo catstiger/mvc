@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class BigDecimalValueConverter implements ValueConverter<BigDecimal> {
+public class BigDecimalValueConverter extends PrimitiveConverter<BigDecimal> {
 
   @Override
   public BigDecimal convert(Object value) {
@@ -13,6 +13,9 @@ public class BigDecimalValueConverter implements ValueConverter<BigDecimal> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
+    if(isNull(trimmed)) {
+      return null;
+    }
     return new BigDecimal(trimmed);
   }
 

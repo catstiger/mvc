@@ -94,7 +94,8 @@ public abstract class ConverterFactory {
     } 
     // 原始数据类型
     else if (targetClass.isPrimitive()) {
-      converter = SINGLE_TYPE_CONVERTERS.get(ClassUtils.primitiveToWrapper(targetClass));
+      ValueConverter<?> vc = SINGLE_TYPE_CONVERTERS.get(ClassUtils.primitiveToWrapper(targetClass));
+      converter = new PrimitiveConverterProxy(vc, targetClass);
     } 
     //List
     else if (List.class == targetClass && elementClass != null) {

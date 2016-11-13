@@ -64,7 +64,7 @@ public class BeanValueConverter implements ValueConverter<Object> {
         param = write.getAnnotation(Param.class);
       }
       if((propDesc.getPropertyType() == List.class || propDesc.getPropertyType() == Set.class)) {
-        if((param != null && param.elementType() != null)) {
+        if((param != null && param.elementType() != null && param.elementType() != Object.class)) {
           converter = ConverterFactory.getConverter(propDesc.getPropertyType(), param.elementType());
         }
       } else {

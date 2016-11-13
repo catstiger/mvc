@@ -5,4 +5,8 @@ public abstract class PrimitiveConverter<T> implements ValueConverter<T> {
     int index = (value.startsWith("-") ? 1 : 0);
     return (value.startsWith("0x", index) || value.startsWith("0X", index) || value.startsWith("#", index));
   }
+  
+  protected static boolean isNull(String value) {
+    return value == null || "null".equalsIgnoreCase(value) || "undefined".equalsIgnoreCase(value);
+  }
 }

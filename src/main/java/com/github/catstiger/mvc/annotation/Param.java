@@ -15,5 +15,5 @@ public @interface Param {
   /**
    * 用于标明参数类型，如果参数为数组，Collection，则标明其元素类型
    */
-  Class<?> elementType();
+  Class<?> elementType() default Object.class;
 }

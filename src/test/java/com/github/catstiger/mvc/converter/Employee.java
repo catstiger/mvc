@@ -14,6 +14,7 @@ public class Employee {
   private Double score;
   private String[] props;
   private Department dept;
+  private int age;
   
   public String getFirstName() {
     return firstName;
@@ -69,5 +70,11 @@ public class Employee {
   }
   public void setDept(Department dept) {
     this.dept = dept;
+  }
+  public int getAge() {
+    return age;
+  }
+  public void setAge(int age) {
+    this.age = age;
   }
 }

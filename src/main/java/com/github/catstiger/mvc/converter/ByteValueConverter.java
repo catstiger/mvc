@@ -11,6 +11,9 @@ public class ByteValueConverter extends PrimitiveConverter<Byte> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
+    if(isNull(trimmed)) {
+      return null;
+    }
     return (isHexNumber(trimmed) ? Byte.decode(trimmed) : Byte.valueOf(trimmed));
   }
 
