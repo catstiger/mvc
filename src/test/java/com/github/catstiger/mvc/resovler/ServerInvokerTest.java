@@ -7,13 +7,14 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
-import com.github.catstiger.mvc.ServletObjectHolder;
+import com.github.catstiger.mvc.AbstractTestCase;
+import com.github.catstiger.mvc.config.ApiResHolder;
 import com.github.catstiger.mvc.config.ApiResource;
+import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.service.ServiceProvider;
+import com.github.catstiger.mvc.util.ValueMapUtils;
 
-import junit.framework.TestCase;
-
-public class ServerInvokerTest extends TestCase {
+public class ServerInvokerTest extends AbstractTestCase {
   @Test
   public void testPrimitive() {
     Map<String, Object> map = new HashMap<String, Object>();
@@ -24,9 +25,9 @@ public class ServerInvokerTest extends TestCase {
     map.put("score", new String[] {"90.98"});
     map.put("isActive", new String[] {"true"});
     
-    ServletObjectHolder.setRequestParameters(map);
-    Map<String, Object> params = ServletObjectHolder.getInheritableParams();
-    System.out.println(JSON.toJSONString(params));
+    Map<String, Object> params = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(map, params);
+   
     ApiResource apiRes = new ApiResource();
     
     apiRes.setServiceId(TestService.class.getName());
@@ -43,7 +44,7 @@ public class ServerInvokerTest extends TestCase {
     apiRes.setUri("/test_service/test_primitive");
     
     String json = (String) ServiceInvoker.invoke(apiRes, params);
-    System.out.println(json);
+    assertNotNull(json);
   }
   
   @Test
@@ -56,9 +57,9 @@ public class ServerInvokerTest extends TestCase {
     map.put("score", new String[] {"900.98D"});
     map.put("isActive", new String[] {"null"});
     
-    ServletObjectHolder.setRequestParameters(map);
-    Map<String, Object> params = ServletObjectHolder.getInheritableParams();
-    System.out.println(JSON.toJSONString(params));
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(map, testParam);
+    
     ApiResource apiRes = new ApiResource();
     
     apiRes.setServiceId(TestService.class.getName());
@@ -74,7 +75,66 @@ public class ServerInvokerTest extends TestCase {
     apiRes.setSingleton(true);
     apiRes.setUri("/test_service/test_single_bean");
     
-    String json = (String) ServiceInvoker.invoke(apiRes, params);
+    String json = (String) ServiceInvoker.invoke(apiRes, testParam);
+    assertNotNull(json);
+  }
+  
+  @Test
+  public void testAny() {
+    Initializer.getInstance().loadApiResources("com.github.catstiger");
+    
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_any");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_any");
+    }
+    
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    
+    System.out.println("****" + JSON.toJSONString(testParam, true));
+    
+    String json = (String) ServiceInvoker.invoke(api, testParam);
     System.out.println(json);
   }
+  
+  @Test
+  public void testSingleValue() {
+    Initializer.getInstance().loadApiResources("com.github.catstiger");
+    
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_value");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_single_value");
+    }
+    
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    System.out.println(JSON.toJSONString(testData));
+    
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    System.out.println(JSON.toJSONString(testParam));
+    
+    String json = (String) ServiceInvoker.invoke(api, testParam);
+    System.out.println(json);
+  }
+  
+  @Test
+  public void testSinglePrimitiveArray() {
+    Initializer.getInstance().loadApiResources("com.github.catstiger");
+    
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_primitive_array");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_single_primitive_array");
+    }
+    
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    System.out.println(JSON.toJSONString(testParam, true));
+    
+    String json = (String) ServiceInvoker.invoke(api, testParam);
+    System.out.println(json);
+    
+  }
+  
 }

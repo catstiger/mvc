@@ -2,6 +2,7 @@ package com.github.catstiger.mvc.converter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,21 +16,28 @@ import org.slf4j.LoggerFactory;
 public abstract class ConverterFactory {
   private static Logger logger = LoggerFactory.getLogger(ConverterFactory.class);
   
-
+  private static final Map<Class<?>, ValueConverter<?>> simpleConverters = new HashMap<Class<?>, ValueConverter<?>>(100);
+  public static final Map<Class<?>, ValueConverter<?>> SIMPLE_CONVERTERS;
+  static {
+    simpleConverters.put(Long.class, new LongValueConverter());
+    simpleConverters.put(Integer.class, new IntegerValueConverter());
+    simpleConverters.put(Short.class, new ShortValueConverter());
+    simpleConverters.put(Byte.class, new ByteValueConverter());
+    simpleConverters.put(BigInteger.class, new BigIntegerValueConverter());
+    simpleConverters.put(Float.class, new FloatValueConvert());
+    simpleConverters.put(Double.class, new DoubleValueConverter());
+    simpleConverters.put(String.class, new StringValueConverter());
+    simpleConverters.put(Date.class, new DateValueConverter());
+    simpleConverters.put(java.sql.Date.class, new DateValueConverter());
+    simpleConverters.put(BigDecimal.class, new BigDecimalValueConverter());
+    simpleConverters.put(Boolean.class, new BooleanValueConverter());
+    
+    SIMPLE_CONVERTERS = Collections.unmodifiableMap(simpleConverters);
+  }
+  
   private static final Map<Class<?>, ValueConverter<?>> SINGLE_TYPE_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);
   static {
-    SINGLE_TYPE_CONVERTERS.put(Long.class, new LongValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(Integer.class, new IntegerValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(Short.class, new ShortValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(Byte.class, new ByteValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(BigInteger.class, new BigIntegerValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(Float.class, new FloatValueConvert());
-    SINGLE_TYPE_CONVERTERS.put(Double.class, new DoubleValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(String.class, new StringValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(Date.class, new DateValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(java.sql.Date.class, new DateValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(BigDecimal.class, new BigDecimalValueConverter());
-    SINGLE_TYPE_CONVERTERS.put(Boolean.class, new BooleanValueConverter());
+    SINGLE_TYPE_CONVERTERS.putAll(simpleConverters);
   }
   
   private static final Map<Class<?>, ValueConverter<?>> ARRAY_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);

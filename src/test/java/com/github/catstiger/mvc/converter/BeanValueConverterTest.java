@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
-import com.github.catstiger.mvc.ServletObjectHolder;
+import com.github.catstiger.mvc.util.ValueMapUtils;
 
 import junit.framework.TestCase;
 
@@ -31,8 +31,8 @@ public class BeanValueConverterTest extends TestCase {
     map.put("dept.corp.id", "985873");
     map.put("dept.corp.size", new String[]{"998", "12", "33", "44"});
     
-    ServletObjectHolder.setRequestParameters(map);
-    Map<String, Object> cascaded = ServletObjectHolder.getInheritableParams();
+    Map<String, Object> cascaded = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(map, cascaded);
     
     System.out.println(JSON.toJSONString(cascaded, true));
     

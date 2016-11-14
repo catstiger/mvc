@@ -5,6 +5,7 @@ import java.util.Date;
 import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.annotation.Api;
 import com.github.catstiger.mvc.annotation.Param;
+import com.github.catstiger.mvc.converter.Corp;
 import com.github.catstiger.mvc.converter.Department;
 import com.github.catstiger.mvc.converter.Employee;
 
@@ -30,10 +31,20 @@ public class TestService {
   
   @Api
   public String testAny(@Param("emp") Employee emp, @Param("dept") Department dept, @Param("corpId") Long corpId) {
-    System.out.println(JSON.toJSONString(emp));
-    System.out.println(JSON.toJSONString(dept));
-    System.out.println(corpId);
+    emp.setDept(dept);
+    dept.setCorp(new Corp());
+    dept.getCorp().setId(corpId);
     
-    return null;
+    return JSON.toJSONString(emp, true);
+  }
+  
+  @Api
+  public String testSingleValue(@Param("data") Double value) {
+    return String.valueOf(value);
+  }
+  
+  @Api
+  public String testSinglePrimitiveArray(@Param("dbl") Double [] dbl) {
+    return JSON.toJSONString(dbl);
   }
 }

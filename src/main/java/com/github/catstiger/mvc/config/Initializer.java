@@ -203,15 +203,15 @@ public final class Initializer {
         continue;
       }
       
-      String uriSufix = classApiAnn.value(); //如果Aai定义了URI后缀，那么使用Api定义的
-      if(StringUtils.isBlank(uriSufix)) {
-        uriSufix = "/" + Strman.toSnakeCase(method.getName());
+      String uriSuffix = methodApiAnn.value(); //如果Aai定义了URI后缀，那么使用Api定义的
+      if(StringUtils.isBlank(uriSuffix)) {
+        uriSuffix = "/" + Strman.toSnakeCase(method.getName());
       }
-      if(!uriSufix.startsWith("/")) {
-        uriSufix = "/" + uriSufix;
+      if(!uriSuffix.startsWith("/")) {
+        uriSuffix = "/" + uriSuffix;
       }
-      if(uriSufix.endsWith("/")) {
-        uriSufix = Strman.removeRight(uriSufix, "/");
+      if(uriSuffix.endsWith("/")) {
+        uriSuffix = Strman.removeRight(uriSuffix, "/");
       }
       
       ApiResource apiRes = new ApiResource();
@@ -222,8 +222,8 @@ public final class Initializer {
       apiRes.setServiceId(serviceId);
       apiRes.setSingleton(isSingleton);
       apiRes.setUriPrefix(uriPrefix);
-      apiRes.setUriSufix(uriSufix);
-      apiRes.setUri(uriPrefix + uriSufix);
+      apiRes.setUriSufix(uriSuffix);
+      apiRes.setUri(uriPrefix + uriSuffix);
       
       apiReses.add(apiRes);
     }

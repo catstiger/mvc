@@ -55,7 +55,7 @@ public abstract class ServiceInvoker {
       if(paramType.isArray() || paramType == List.class || paramType == Set.class) {
         args[0] = doSingleArray(params[0], cascadedParams);
       } else {
-        args[0] = doSingleBean(params[0], cascadedParams);
+        args[0] = doSingleValue(params[0], cascadedParams);
       }
     } else {
       for(int i = 0; i < params.length; i++) {
@@ -93,17 +93,26 @@ public abstract class ServiceInvoker {
       throw new RuntimeException("无法找到转换器");
     }
     
-    return converter.convert(cascadedParams);
+    String paramName = getParameterName(parameter, 0);
+    return converter.convert(cascadedParams.get(paramName));
   }
   
-  private static Object doSingleBean(Parameter parameter, Map<String, Object> cascadedParams) {
+  private static Object doSingleValue(Parameter parameter, Map<String, Object> cascadedParams) {
     if(cascadedParams == null || cascadedParams.isEmpty()) {
       return null;
     }
     Class<?> paramType = parameter.getType();
+    String paramName = getParameterName(parameter, 0);
     ValueConverter<?> converter = ConverterFactory.getConverter(paramType);
     
-    return converter.convert(cascadedParams);
+    Object value;
+    if(ConverterFactory.SIMPLE_CONVERTERS.containsKey(paramType)) {
+      value = converter.convert(cascadedParams.get(paramName));
+    } else {
+      value = converter.convert(cascadedParams);
+    }
+    
+    return value;
   }
   
   private static Object getParamValue(Parameter parameter, Map<String, Object> cascadedParams, int paramIndex) {
@@ -127,7 +136,7 @@ public abstract class ServiceInvoker {
     return converter.convert(value);
   }
   
-  private static String getParameterName(Parameter parameter, int paramIndex) {
+  public static String getParameterName(Parameter parameter, int paramIndex) {
     if(parameter == null) {
       return null;
     }
