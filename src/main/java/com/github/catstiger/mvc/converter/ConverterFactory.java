@@ -48,6 +48,10 @@ public abstract class ConverterFactory {
   public static ValueConverter<?> getConverter(Class<?> targetClass) {
     return getConverter(targetClass, null);
   }
+  
+  public static boolean isPojo(Class<?> clazz) {
+    return (!clazz.isPrimitive() && !clazz.isArray() && !ConverterFactory.SIMPLE_CONVERTERS.containsKey(clazz) && clazz  != List.class && clazz != Set.class && clazz != Map.class);
+  }
   /**
    * 根据给定的<code>Class</code>找到合适的{@link ValueConverter}的实现
    * 

@@ -2,9 +2,7 @@ package com.github.catstiger.mvc.resovler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -50,13 +48,9 @@ public abstract class ServiceInvoker {
     
     Parameter[] params = method.getParameters();
     Object[] args = new Object[params.length];
-    if(params.length == 1) {
-      Class<?> paramType = params[0].getType();
-      if(paramType.isArray() || paramType == List.class || paramType == Set.class) {
-        args[0] = doSingleArray(params[0], cascadedParams);
-      } else {
-        args[0] = doSingleValue(params[0], cascadedParams);
-      }
+    
+    if(params.length == 1 && ConverterFactory.isPojo(params[0].getType()) && !cascadedParams.containsKey(params[0].getName())) {
+      args[0] = doSingleValue(params[0], cascadedParams);
     } else {
       for(int i = 0; i < params.length; i++) {
         Object value = getParamValue(params[i], cascadedParams, i);
@@ -72,47 +66,14 @@ public abstract class ServiceInvoker {
     }
   }
   
-  private static Object doSingleArray(Parameter parameter, Map<String, Object> cascadedParams) {
-    if(cascadedParams == null || cascadedParams.isEmpty()) {
-      return null;
-    }
-    Class<?> paramType = parameter.getType();
-    ValueConverter<?> converter = null;
-    if(paramType == List.class || paramType == Set.class) {
-      Class<?> elementType = null;
-      
-      Param param = parameter.getAnnotation(Param.class);
-      if(param != null && param.elementType() != null && param.elementType() != Object.class) {
-        elementType = param.elementType();
-        converter = ConverterFactory.getConverter(paramType, elementType);
-      }
-    } else if (paramType.isArray()) {
-      converter = ConverterFactory.getConverter(paramType, paramType.getComponentType());
-    }
-    if(converter == null) {
-      throw new RuntimeException("无法找到转换器");
-    }
-    
-    String paramName = getParameterName(parameter, 0);
-    return converter.convert(cascadedParams.get(paramName));
-  }
-  
   private static Object doSingleValue(Parameter parameter, Map<String, Object> cascadedParams) {
     if(cascadedParams == null || cascadedParams.isEmpty()) {
       return null;
     }
     Class<?> paramType = parameter.getType();
-    String paramName = getParameterName(parameter, 0);
     ValueConverter<?> converter = ConverterFactory.getConverter(paramType);
     
-    Object value;
-    if(ConverterFactory.SIMPLE_CONVERTERS.containsKey(paramType)) {
-      value = converter.convert(cascadedParams.get(paramName));
-    } else {
-      value = converter.convert(cascadedParams);
-    }
-    
-    return value;
+    return converter.convert(cascadedParams);
   }
   
   private static Object getParamValue(Parameter parameter, Map<String, Object> cascadedParams, int paramIndex) {

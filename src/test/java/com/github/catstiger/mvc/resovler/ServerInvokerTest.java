@@ -77,6 +77,18 @@ public class ServerInvokerTest extends AbstractTestCase {
     
     String json = (String) ServiceInvoker.invoke(apiRes, testParam);
     assertNotNull(json);
+    
+    //使用自动生成的数据
+    Initializer.getInstance().loadApiResources("com.github.catstiger");
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_bean");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_single_bean");
+    }
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    json = (String) ServiceInvoker.invoke(api, testParam);
+    System.out.println(json);
   }
   
   @Test
@@ -125,6 +137,25 @@ public class ServerInvokerTest extends AbstractTestCase {
     ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_primitive_array");
     if(api == null) {
       throw new RuntimeException("404, /test_service/test_single_primitive_array");
+    }
+    
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    System.out.println(JSON.toJSONString(testParam, true));
+    
+    String json = (String) ServiceInvoker.invoke(api, testParam);
+    System.out.println(json);
+    
+  }
+  
+  @Test
+  public void testSingleDateArray() {
+    Initializer.getInstance().loadApiResources("com.github.catstiger");
+    
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_date_array");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_single_date_array");
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);

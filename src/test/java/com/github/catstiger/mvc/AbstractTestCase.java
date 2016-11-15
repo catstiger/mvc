@@ -88,13 +88,19 @@ public abstract class AbstractTestCase extends TestCase {
       logger.debug("Generic single parameter value.");
       Class<?> paramType = params[0].getType();
       String paramName = ServiceInvoker.getParameterName(params[0], 0);
+      
       if(ConverterFactory.SIMPLE_CONVERTERS.containsKey(paramType) || paramType.isPrimitive()) {
         data.put(paramName, new String[]{getSingleString(paramType, justPrimitive)});
       } else if (paramType.isArray()) {
         Object value = getSingleArray(paramType, justPrimitive);
         data.put(paramName, value);
-      } //TODO: Bean...
+      } else {
+        Map<String, Object> value = this.prepareTestData(paramType, justPrimitive);
+        data.putAll(value);
+      }
+      
     } else {
+      
       for (int i = 0; i < params.length; i++) {
         Class<?> paramType = params[i].getType();
         String paramName = ServiceInvoker.getParameterName(params[i], i);

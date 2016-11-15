@@ -3,6 +3,7 @@ package com.github.catstiger.mvc.resovler;
 import java.util.Date;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.catstiger.mvc.annotation.Api;
 import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.converter.Corp;
@@ -44,7 +45,12 @@ public class TestService {
   }
   
   @Api
-  public String testSinglePrimitiveArray(@Param("dbl") Double [] dbl) {
+  public String testSinglePrimitiveArray(@Param("dbl") double [] dbl) {
     return JSON.toJSONString(dbl);
+  }
+  
+  @Api
+  public String testSingleDateArray(@Param("dates") Date[] date) {
+    return JSON.toJSONString(date, SerializerFeature.WriteDateUseDateFormat);
   }
 }
