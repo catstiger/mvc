@@ -2,6 +2,9 @@ package com.github.catstiger.mvc.resovler;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.catstiger.mvc.annotation.Api;
@@ -33,8 +36,10 @@ public class TestService {
   @Api
   public String testAny(@Param("emp") Employee emp, @Param("dept") Department dept, @Param("corpId") Long corpId) {
     emp.setDept(dept);
-    dept.setCorp(new Corp());
-    dept.getCorp().setId(corpId);
+    if(dept != null) {
+      dept.setCorp(new Corp());
+      dept.getCorp().setId(corpId);
+    }
     
     return JSON.toJSONString(emp, true);
   }
@@ -52,5 +57,26 @@ public class TestService {
   @Api
   public String testSingleDateArray(@Param("dates") Date[] date) {
     return JSON.toJSONString(date, SerializerFeature.WriteDateUseDateFormat);
+  }
+  
+  @Api
+  public void testEmptyArgs() {
+    
+  }
+  
+  @Api
+  public void testHttp(HttpServletRequest request, HttpServletResponse response) {
+    if(request == null || response == null) {
+      throw new RuntimeException("Request or response is null");
+    }
+    System.out.print("HTTP TEST OK");
+  }
+  
+  @Api
+  public void testRequest(HttpServletRequest request) {
+    if(request == null) {
+      throw new RuntimeException("Request is null");
+    }
+    System.out.print("HTTP TEST OK");
   }
 }

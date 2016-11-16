@@ -2,10 +2,11 @@ package com.github.catstiger.mvc.resovler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.config.ApiResource;
@@ -13,10 +14,14 @@ import com.github.catstiger.mvc.converter.ConverterFactory;
 import com.github.catstiger.mvc.converter.ValueConverter;
 import com.github.catstiger.mvc.service.ServiceProvider;
 import com.github.catstiger.mvc.service.ServiceProviderFactory;
+import com.github.catstiger.mvc.util.CollectionUtils;
+import com.github.catstiger.mvc.util.ReflectUtils;
+import com.github.catstiger.mvc.util.StringUtils;
 
 import strman.Strman;
 
 public abstract class ServiceInvoker {
+  private static Logger logger = LoggerFactory.getLogger(ServiceInvoker.class);
   /**
    * 
    * @param apiResource
@@ -38,53 +43,38 @@ public abstract class ServiceInvoker {
       throw new RuntimeException("No service found. " + apiResource.getServiceId());
     }
     
-    Method method = null;
-    try {
-      method = svr.getClass().getMethod(apiResource.getMethodName(), apiResource.getMethod().getParameterTypes());
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
+    Method method = apiResource.getMethod();
+    if(method == null) {
+      throw new RuntimeException("没有处理此URI的方法, " +apiResource.getUri());
     }
     
     Parameter[] params = method.getParameters();
     Object[] args = new Object[params.length];
     
+    if(cascadedParams == null) {
+      cascadedParams = Collections.emptyMap();
+    }
+    //当只有一个参数，且参数为POJO，允许参数属性直接作为KEY
     if(params.length == 1 && ConverterFactory.isPojo(params[0].getType()) && !cascadedParams.containsKey(params[0].getName())) {
-      args[0] = doSingleValue(params[0], cascadedParams);
-    } else {
+      Class<?> paramType = params[0].getType();
+      ValueConverter<?> converter = ConverterFactory.getConverter(paramType);
+      args[0] = converter.convert(cascadedParams);
+    } 
+    else { //多个参数，或者单个primitive\collection
       for(int i = 0; i < params.length; i++) {
         Object value = getParamValue(params[i], cascadedParams, i);
         args[i] = value;
       }
     }
-        
-    try {
-      return method.invoke(svr, args);
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
-    }
-  }
-  
-  private static Object doSingleValue(Parameter parameter, Map<String, Object> cascadedParams) {
-    if(cascadedParams == null || cascadedParams.isEmpty()) {
-      return null;
-    }
-    Class<?> paramType = parameter.getType();
-    ValueConverter<?> converter = ConverterFactory.getConverter(paramType);
     
-    return converter.convert(cascadedParams);
+    return ReflectUtils.invokeMethod(method, svr, args);
   }
   
   private static Object getParamValue(Parameter parameter, Map<String, Object> cascadedParams, int paramIndex) {
     if(CollectionUtils.isEmpty(cascadedParams)) {
-      return null;
+      cascadedParams = Collections.emptyMap();
     }
     String paramName = getParameterName(parameter, paramIndex);
-    Object value = cascadedParams.get(paramName);
-    if(value == null) {
-      return null;
-    }
     Class<?> paramType = parameter.getType();
     Class<?> elementType = null;
     
@@ -94,6 +84,10 @@ public abstract class ServiceInvoker {
     }
     
     ValueConverter<?> converter = ConverterFactory.getConverter(paramType, elementType);
+    logger.debug("转换器 {} {}", paramType.getName(), converter.getClass().getName());
+    
+    Object value = cascadedParams.get(paramName);
+    
     return converter.convert(value);
   }
   

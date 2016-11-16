@@ -2,7 +2,8 @@ package com.github.catstiger.mvc.converter;
 
 import java.lang.reflect.Array;
 
-import org.apache.commons.lang3.ClassUtils;
+import com.github.catstiger.mvc.util.ClassUtils;
+
 
 /**
  * 数组转换

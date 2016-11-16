@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.util.ClassUtils;
-
 public final class ValueMapUtils {
   private ValueMapUtils() {
     
@@ -59,7 +57,7 @@ public final class ValueMapUtils {
         String prefix = key.substring(0, dotIndex);
         Map<String, Object> subParams = null;
         Object item = outputCascadeMap.get(prefix);
-        if(item != null && ClassUtils.isAssignable(Map.class, item.getClass())) {
+        if(item != null && ClassUtils.isAssignable(item.getClass(), Map.class, false)) {
           subParams = (Map<String, Object>) item;
         } else {
           subParams = new HashMap<String, Object>(10);
@@ -90,7 +88,7 @@ public final class ValueMapUtils {
     for(Iterator<String> itr = keys.iterator(); itr.hasNext();) {
       String key = itr.next();
       Object val = outputCascadeMap.get(key);
-      if(ClassUtils.isAssignable(Map.class, val.getClass())) {
+      if(ClassUtils.isAssignable(val.getClass(), Map.class, false)) {
         Map<String, Object> map = new HashMap<String, Object>();
         inheritableParams((Map<String, Object>) val, map);
         outputCascadeMap.put(key, map);

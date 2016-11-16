@@ -9,9 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.ClassUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.catstiger.mvc.util.ClassUtils;
 
 public abstract class ConverterFactory {
   private static Logger logger = LoggerFactory.getLogger(ConverterFactory.class);
@@ -44,14 +48,14 @@ public abstract class ConverterFactory {
   private static final Map<Class<?>, ValueConverter<?>> LIST_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);
   private static final Map<Class<?>, ValueConverter<?>> SET_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);
   
+  public static boolean isPojo(Class<?> clazz) {
+    return (!clazz.isPrimitive() && !clazz.isArray() && !ConverterFactory.SIMPLE_CONVERTERS.containsKey(clazz) && clazz  != List.class && clazz != Set.class && clazz != Map.class);
+  }
   
   public static ValueConverter<?> getConverter(Class<?> targetClass) {
     return getConverter(targetClass, null);
   }
   
-  public static boolean isPojo(Class<?> clazz) {
-    return (!clazz.isPrimitive() && !clazz.isArray() && !ConverterFactory.SIMPLE_CONVERTERS.containsKey(clazz) && clazz  != List.class && clazz != Set.class && clazz != Map.class);
-  }
   /**
    * 根据给定的<code>Class</code>找到合适的{@link ValueConverter}的实现
    * 
@@ -116,6 +120,14 @@ public abstract class ConverterFactory {
     //Set
     else if (Set.class == targetClass && elementClass != null) {
       converter = new SetValueConverter(elementClass);
+    } 
+    //Request
+    else if (ClassUtils.isAssignable(targetClass, HttpServletRequest.class, false)) {
+      converter = new HttpServletRequestValueConverter();
+    }
+    //Response
+    else if (ClassUtils.isAssignable(targetClass, HttpServletResponse.class, false)) {
+      converter = new HttpServletResponseValueConverter();
     }
     // 原始数据类型Wrapper,Date, String, BigDecimal etc.
     else if (SINGLE_TYPE_CONVERTERS.containsKey(targetClass)) {

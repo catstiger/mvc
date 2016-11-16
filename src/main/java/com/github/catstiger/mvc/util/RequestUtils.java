@@ -10,9 +10,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
-
 import com.google.common.net.HttpHeaders;
 
 public final class RequestUtils {
@@ -89,7 +86,6 @@ public final class RequestUtils {
    */
   @SuppressWarnings("rawtypes")
   public static Map<String, Object> getParametersStartingWith(ServletRequest request, String prefix) {
-    Assert.notNull(request, "Request must not be null");
     Enumeration paramNames = request.getParameterNames();
     Map<String, Object> params = new TreeMap<String, Object>();
     if (prefix == null) {

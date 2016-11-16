@@ -2,7 +2,7 @@ package com.github.catstiger.mvc.converter;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang3.StringUtils;
+import com.github.catstiger.mvc.util.StringUtils;
 
 public class BigDecimalValueConverter extends PrimitiveConverter<BigDecimal> {
 

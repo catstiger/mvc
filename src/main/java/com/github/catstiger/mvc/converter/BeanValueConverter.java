@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.util.ClassUtils;
 
 import com.github.catstiger.mvc.annotation.Param;
+import com.github.catstiger.mvc.util.ClassUtils;
+import com.github.catstiger.mvc.util.ReflectUtils;
 
 public class BeanValueConverter implements ValueConverter<Object> {
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -35,8 +35,7 @@ public class BeanValueConverter implements ValueConverter<Object> {
       return null;
     }
     
-    if(!ClassUtils.isAssignable(Map.class, value.getClass())) {
-      logger.warn("Bean转换需要提供一个Value Map");
+    if(!ClassUtils.isAssignable(value.getClass(), Map.class, false)) {
       return null;
     }
     
@@ -50,7 +49,7 @@ public class BeanValueConverter implements ValueConverter<Object> {
     }
     
     Map<String, Object> valueMap = (Map<String, Object>) value;
-    PropertyDescriptor[] propertyDescs = BeanUtils.getPropertyDescriptors(targetType);
+    PropertyDescriptor[] propertyDescs = ReflectUtils.getPropertyDescriptors(targetType);
     
     for(PropertyDescriptor propDesc : propertyDescs) {
       if("class".equals(propDesc.getName())) {

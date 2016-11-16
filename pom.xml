@@ -45,17 +45,15 @@
   		<groupId>joda-time</groupId>
   		<artifactId>joda-time</artifactId>
   		<version>1.6.2</version>
+  		<scope>test</scope>
   	</dependency>
+  	
   	<dependency>
-  		<groupId>org.apache.commons</groupId>
-  		<artifactId>commons-lang3</artifactId>
-  		<version>3.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>javassist</groupId>
-  		<artifactId>javassist</artifactId>
-  		<version>3.12.1.GA</version>
-  	</dependency>
+	    <groupId>com.alibaba</groupId>
+	    <artifactId>druid</artifactId>
+	    <version>1.0.26</version>
+    </dependency>
+  	
   	<dependency>
   		<groupId>javax.servlet</groupId>
   		<artifactId>servlet-api</artifactId>
@@ -68,12 +66,7 @@
   		<version>1.1.2</version>
   		<scope>provided</scope>
   	</dependency>
-  	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  		<version>4.8.2</version>
-  		<scope>test</scope>
-  	</dependency>
+  	
 
   	<dependency>
   		<groupId>com.google.guava</groupId>
@@ -120,7 +113,55 @@
   		<artifactId>spring-web</artifactId>
   		<version>4.2.7.RELEASE</version>
   	</dependency>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-tx</artifactId>
+  		<version>4.2.7.RELEASE</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-jdbc</artifactId>
+  		<version>4.2.7.RELEASE</version>
+  	</dependency>
+  	
+  	
+  	<dependency>
+	    <groupId>com.h2database</groupId>
+	    <artifactId>h2</artifactId>
+	    <version>1.4.193</version>
+	    <scope>test</scope>
+    </dependency>
+    <dependency>  
+        <groupId>org.mockito</groupId>  
+        <artifactId>mockito-all</artifactId>  
+        <version>1.9.5</version>  
+        <scope>test</scope>  
+    </dependency>  
+    <dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.8.2</version>
+  		<scope>test</scope>
+  	</dependency>
+    
   </dependencies>
+  
+  <repositories>
+      <repository>
+					<id>Honqun Nexus</id>
+					<name>Honqun Repository</name>
+					<url>http://115.28.55.60:8081/nexus/content/groups/public/</url>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+		  </repository>
+		
+		  <repository>
+					<id>Honqun Nexus 3dp</id>
+					<name>Honqun Repository 3dp</name>
+					<url>http://115.28.55.60:8081/nexus/content/repositories/thirdparty/</url>			
+		  </repository>
+  </repositories>
   <organization>
   	<name>Honqun.org</name>
   </organization>

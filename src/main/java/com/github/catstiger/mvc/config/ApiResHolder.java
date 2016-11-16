@@ -3,9 +3,10 @@ package com.github.catstiger.mvc.config;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.catstiger.mvc.util.StringUtils;
 
 import strman.Strman;
 
@@ -19,6 +20,7 @@ public final class ApiResHolder {
     if(apiResource == null) {
       return;
     }  
+    
     if(StringUtils.isBlank(apiResource.getUri())) {
       logger.warn("URI is null, ignored");
       return;
@@ -27,7 +29,7 @@ public final class ApiResHolder {
       logger.warn("URI is duplicated [{}]", apiResource.getUri());
     }
     
-    
+    logger.debug("Add URI [{}]", apiResource.getUri());
     apiMapping.put(apiResource.getUri(), apiResource);
   }
   

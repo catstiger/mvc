@@ -1,6 +1,6 @@
 package com.github.catstiger.mvc.converter;
 
-import org.apache.commons.lang3.StringUtils;
+import com.github.catstiger.mvc.util.StringUtils;
 
 public class ShortValueConverter extends PrimitiveConverter<Short> {
 

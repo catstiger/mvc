@@ -2,8 +2,6 @@ package com.github.catstiger.mvc.converter;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -11,6 +9,7 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 
 import com.github.catstiger.mvc.config.Initializer;
+import com.github.catstiger.mvc.util.StringUtils;
 
 public class DateValueConverter implements ValueConverter<Date> {
 
@@ -21,7 +20,7 @@ public class DateValueConverter implements ValueConverter<Date> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
-    if(NumberUtils.isNumber(trimmed)) {
+    if(StringUtils.isNumber(trimmed)) {
       return new Date(Long.valueOf(trimmed));
     } else {
       return parseDate(trimmed);

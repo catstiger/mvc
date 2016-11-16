@@ -6,26 +6,29 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.converter.ConverterFactory;
 import com.github.catstiger.mvc.resovler.ServiceInvoker;
+import com.github.catstiger.mvc.util.ClassUtils;
+import com.github.catstiger.mvc.util.ReflectUtils;
+import com.github.catstiger.mvc.util.StringUtils;
 
-import junit.framework.TestCase;
-
-public abstract class AbstractTestCase extends TestCase {
+public abstract class AbstractTestCase {
   protected Logger logger = LoggerFactory.getLogger(getClass());
 
   protected Method getMethodByName(Class<?> clazz, String methodName) {
@@ -41,17 +44,22 @@ public abstract class AbstractTestCase extends TestCase {
   /**
    * 根据Bean类型，生成测试数据，测试数据的格式符合HttpServletRequest#getParameterMap()返回的数据格式
    * 
-   * @param beanClass
-   *          给出Bean类型
-   * @param justPrimitive
-   *          是否只处理primitive类型，如果为false,则递归生成包含的bean的测试数据
+   * @param beanClass 给出Bean类型
+   * @param justPrimitive 是否只处理primitive类型，如果为false,则递归生成包含的bean的测试数据
    * @return
    */
   protected Map<String, Object> prepareTestData(Class<?> beanClass, boolean justPrimitive) {
-    PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(beanClass);
+    if(ClassUtils.isAssignable(beanClass, ServletRequest.class, false)) {
+      return Collections.emptyMap();
+    }
+    if(ClassUtils.isAssignable(beanClass, ServletResponse.class, false)) {
+      return Collections.emptyMap();
+    }
+    
+    PropertyDescriptor[] pds = ReflectUtils.getPropertyDescriptors(beanClass);
     Map<String, Object> data = new HashMap<String, Object>(pds.length);
     for (PropertyDescriptor pd : pds) {
-      if (pd.getName().equals("class")) {
+      if (pd == null || pd.getName() == null || pd.getName().equals("class")) {
         continue;
       }
       Object value = null;
@@ -140,15 +148,15 @@ public abstract class AbstractTestCase extends TestCase {
   protected String getSingleString(Class<?> targetClass, boolean justPrimitive) {
     String value;
     if (targetClass == int.class || targetClass == Integer.class || targetClass == BigInteger.class) {
-      value = RandomStringUtils.randomNumeric(6);
+      value = StringUtils.randomNumeric(6);
     } else if (targetClass == long.class || targetClass == Long.class) {
-      value = RandomStringUtils.randomNumeric(8);
+      value = StringUtils.randomNumeric(8);
     } else if (targetClass == double.class || targetClass == Double.class || targetClass == BigDecimal.class) {
       value = String.valueOf(new Random().nextDouble());
     } else if (targetClass == float.class || targetClass == Float.class) {
       value = String.valueOf(new Random().nextFloat());
     } else if (targetClass == String.class) {
-      value = "S_" + RandomStringUtils.randomNumeric(10);
+      value = "S_" + StringUtils.randomNumeric(10);
     } else if (targetClass == boolean.class || targetClass == Boolean.class) {
       value = String.valueOf(new Random().nextBoolean());
     } else if (targetClass == Date.class) {
