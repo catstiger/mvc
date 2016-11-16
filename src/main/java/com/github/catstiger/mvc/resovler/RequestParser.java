@@ -27,13 +27,30 @@ public abstract class RequestParser {
     
     uri = Strman.removeLeft(uri, request.getContextPath());
     uri = Strman.removeLeft(uri, cfg.getUriPrefix());
-    uri = Strman.removeRight(uri, cfg.getUriSuffix());
+    int dotIndex = uri.indexOf(".");
+    if(dotIndex > 0) {
+      uri = uri.substring(0, dotIndex);
+    }
     
     if(uri.endsWith("/")) {
       uri = Strman.removeRight(uri, "/");
     }
     
     return uri;
+  }
+  
+  /**
+   * 判断是否为JSON请求，URI后缀为.htm或者.html的为非JSON请求，其他都是JSON请求
+   * @return 如果为JSON请求，返回true
+   */
+  public static boolean isJsonRequest(HttpServletRequest request) {
+    String uri = request.getRequestURI();
+    if(uri == null) {
+      logger.warn("URI is null !");
+      return false;
+    }
+    
+    return (Strman.endsWith(uri, ".json", false) || (!Strman.endsWith(uri, ".htm", false) && !Strman.endsWith(uri, ".html", false)));
   }
   
 }

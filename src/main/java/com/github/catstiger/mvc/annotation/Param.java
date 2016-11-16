@@ -12,8 +12,5 @@ public @interface Param {
    * 用于对应Http参数名称
    */
   String value() default "";
-  /**
-   * 用于标明参数类型，如果参数为数组，Collection，则标明其元素类型
-   */
-  Class<?> elementType() default Object.class;
+  
 }

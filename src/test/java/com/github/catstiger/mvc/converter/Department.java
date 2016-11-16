@@ -2,8 +2,6 @@ package com.github.catstiger.mvc.converter;
 
 import java.util.List;
 
-import com.github.catstiger.mvc.annotation.Param;
-
 public class Department {
   private String deptName;
   private Long id;
@@ -31,7 +29,7 @@ public class Department {
   public List<Long> getList() {
     return list;
   }
-  @Param(elementType = Long.class)
+ 
   public void setList(List<Long> list) {
     this.list = list;
   }

@@ -2,6 +2,7 @@ package com.github.catstiger.mvc.resovler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import com.github.catstiger.mvc.converter.ConverterFactory;
 import com.github.catstiger.mvc.converter.ValueConverter;
 import com.github.catstiger.mvc.service.ServiceProvider;
 import com.github.catstiger.mvc.service.ServiceProviderFactory;
+import com.github.catstiger.mvc.util.ClassUtils;
 import com.github.catstiger.mvc.util.CollectionUtils;
 import com.github.catstiger.mvc.util.ReflectUtils;
 import com.github.catstiger.mvc.util.StringUtils;
@@ -57,7 +59,9 @@ public abstract class ServiceInvoker {
     //当只有一个参数，且参数为POJO，允许参数属性直接作为KEY
     if(params.length == 1 && ConverterFactory.isPojo(params[0].getType()) && !cascadedParams.containsKey(params[0].getName())) {
       Class<?> paramType = params[0].getType();
-      ValueConverter<?> converter = ConverterFactory.getConverter(paramType);
+      Class<?> elementType = getParameterActualType(params[0]);
+      
+      ValueConverter<?> converter = ConverterFactory.getConverter(paramType, elementType);
       args[0] = converter.convert(cascadedParams);
     } 
     else { //多个参数，或者单个primitive\collection
@@ -70,18 +74,28 @@ public abstract class ServiceInvoker {
     return ReflectUtils.invokeMethod(method, svr, args);
   }
   
+  public static Class<?> getParameterActualType(Parameter parameter) {
+     Class<?> elementType = null;
+    
+    if(ClassUtils.isAssignable(parameter.getType(), Collection.class, false)) {
+      elementType = ReflectUtils.getActualTypeOfCollectionElement(parameter);
+      if(elementType == null) {
+        elementType = String.class;
+      }
+    } else if (parameter.getType().isArray()) {
+      elementType = parameter.getType().getComponentType();
+    }
+    
+    return elementType;
+  }
+  
   private static Object getParamValue(Parameter parameter, Map<String, Object> cascadedParams, int paramIndex) {
     if(CollectionUtils.isEmpty(cascadedParams)) {
       cascadedParams = Collections.emptyMap();
     }
     String paramName = getParameterName(parameter, paramIndex);
     Class<?> paramType = parameter.getType();
-    Class<?> elementType = null;
-    
-    Param param = parameter.getAnnotation(Param.class);
-    if(param != null && param.elementType() != null && param.elementType() != Object.class) {
-      elementType = param.elementType();
-    }
+    Class<?> elementType = getParameterActualType(parameter);
     
     ValueConverter<?> converter = ConverterFactory.getConverter(paramType, elementType);
     logger.debug("转换器 {} {}", paramType.getName(), converter.getClass().getName());

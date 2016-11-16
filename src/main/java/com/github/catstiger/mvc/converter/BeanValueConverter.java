@@ -2,14 +2,13 @@ package com.github.catstiger.mvc.converter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.lang.reflect.Parameter;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.util.ClassUtils;
 import com.github.catstiger.mvc.util.ReflectUtils;
 
@@ -58,17 +57,19 @@ public class BeanValueConverter implements ValueConverter<Object> {
       //对应该属性的转换器
       ValueConverter<?> converter = null;
       Method write = propDesc.getWriteMethod();
-      Param param = null;
-      if(write != null) {
-        param = write.getAnnotation(Param.class);
-      }
-      if((propDesc.getPropertyType() == List.class || propDesc.getPropertyType() == Set.class)) {
-        if((param != null && param.elementType() != null && param.elementType() != Object.class)) {
-          converter = ConverterFactory.getConverter(propDesc.getPropertyType(), param.elementType());
+      
+      if(ClassUtils.isAssignable(propDesc.getPropertyType(), Collection.class)) {
+        //如果参数为Collection的实现类，获得其泛型参数类型
+        Parameter param = write.getParameters()[0];
+        Class<?> elementType = ReflectUtils.getActualTypeOfCollectionElement(param);
+        if(elementType == null) {
+          elementType = String.class;
         }
+        converter = ConverterFactory.getConverter(propDesc.getPropertyType(), elementType);
       } else {
         converter = ConverterFactory.getConverter(propDesc.getPropertyType());
       }
+      
       if(converter == null) {
         logger.debug("没有对应的转换器 {}#{}", targetType.getSimpleName(), propDesc.getName());
         continue;
