@@ -1,4 +1,4 @@
-package com.github.catstiger.mvc.resovler;
+package com.github.catstiger.mvc.resolver;
 
 import java.util.ArrayList;
 import java.util.List;

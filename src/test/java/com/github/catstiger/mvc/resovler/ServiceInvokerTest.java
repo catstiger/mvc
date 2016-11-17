@@ -21,6 +21,7 @@ import com.github.catstiger.mvc.SpringHelper;
 import com.github.catstiger.mvc.config.ApiResHolder;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.config.Initializer;
+import com.github.catstiger.mvc.resolver.ServiceInvoker;
 import com.github.catstiger.mvc.service.ServiceProvider;
 import com.github.catstiger.mvc.util.ValueMapUtils;
 
