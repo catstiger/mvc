@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.github.catstiger.mvc.resolver.ResponseResolver;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface API {
@@ -18,6 +20,12 @@ public @interface API {
    * 
    * @return
    */
-  String value() default "";
+  public String value() default "";
+  
+  /**
+   * 定义API执行结果的处理器
+   * @return
+   */
+  public Class<? extends ResponseResolver> resolver() default ResponseResolver.None.class;
   
 }

@@ -1,11 +1,11 @@
 package com.github.catstiger.mvc.resolver;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.github.catstiger.mvc.config.ApiResource;
 
-public interface AfterInvoked {
+public interface ResponseResolver {
   
   /**
    * URI调用完成之后，调用这个方法，处理后续的工作
@@ -15,13 +15,17 @@ public interface AfterInvoked {
    *     <li>如果根据uri判断为JSON请求，则将结果转换为JSON</li>
    *     <li>如果根据uri判断为HTML情况，则重定向到相关页面</li>
    * </ul>
+   * @param request HTTP请求
+   * @param HttpServletResponse
    * @param apiResource 本次调用对应的ApiResource对象
    * @param value 本次调用处理的数据
    */
-  public void doAfterInvoked(ApiResource apiResource, Object value);
+  public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value);
   
-  public static void main(String[]args) {
-    List<Long> a = new ArrayList<Long>();
-    System.out.println(a.getClass().getSigners());
-  }
+  /**
+   * This marker class is only to be used with annotations, to
+   * indicate that <b>no resolver is to be used</b>.
+   */
+  public abstract static class None
+  implements ResponseResolver { }
 }
