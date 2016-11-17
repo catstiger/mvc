@@ -328,6 +328,31 @@ public class ServiceInvokerTest extends AbstractTestCase {
   }
   
   @Test
+  public void testCollection() {
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_list");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_list");
+    }
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    
+    System.out.println(JSON.toJSONString(testParam, true));
+    ServiceInvoker.invoke(api, testParam);
+    
+    api = ApiResHolder.getInstance().getApiResource("/test_service/test_set");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_set");
+    }
+    testData = this.prepareTestData(api.getMethod(), true);
+    testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    
+    System.out.println(JSON.toJSONString(testParam, true));
+    ServiceInvoker.invoke(api, testParam);
+  }
+  
+  @Test
   public void testAnySpring() {
     
     ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_any");
@@ -343,6 +368,49 @@ public class ServiceInvokerTest extends AbstractTestCase {
     
     String json = (String) ServiceInvoker.invoke(api, testParam);
     System.out.println(json);
+  }
+  
+  @Test
+  public void testAnySpringManyTimes() {
+    
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_any");
+    if(api == null) {
+      throw new RuntimeException("404, /spring_test_service/test_any");
+    }
+    
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    
+    long b = new Date().getTime();
+    for(int i = 0; i < 100 * 10000; i++) {
+      ServiceInvoker.invoke(api, testParam);
+      if(i % 1000 == 0) {
+        long a = new Date().getTime();
+        System.out.println((a - b) / 1000 + "s");
+      }
+    }
+  }
+  
+  @Test
+  public void testSingleBeanSpringManyTimes() {
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_single_bean");
+    if(api == null) {
+      throw new RuntimeException("404, /spring_test_service/test_single_bean");
+    }
+    
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    
+    long b = new Date().getTime();
+    for(int i = 0; i < 100 * 10000; i++) {
+      ServiceInvoker.invoke(api, testParam);
+      if(i % 1000 == 0) {
+        long a = new Date().getTime();
+        System.out.println((a - b) / 1000 + "s");
+      }
+    }
   }
   
   @Test

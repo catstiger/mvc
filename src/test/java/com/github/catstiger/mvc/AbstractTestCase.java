@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,6 +70,11 @@ public abstract class AbstractTestCase {
       if (propType.isArray()) {
         value = getSingleArray(propType, justPrimitive);
         data.put(name, value);
+      } else if (ClassUtils.isAssignable(propType, Collection.class)){
+        Class<?> elementType = ReflectUtils.getActualTypeOfCollectionElement(pd.getWriteMethod().getParameters()[0]);
+        Class<?> arrayClass = Array.newInstance(elementType, 10).getClass();
+        value = getSingleArray(arrayClass, justPrimitive);
+        data.put(name, value);
       } else if (ConverterFactory.SIMPLE_CONVERTERS.containsKey(propType) || propType.isPrimitive()) {
         value = new String[] { getSingleString(propType, justPrimitive) };
         data.put(name, value);
@@ -102,6 +108,11 @@ public abstract class AbstractTestCase {
       } else if (paramType.isArray()) {
         Object value = getSingleArray(paramType, justPrimitive);
         data.put(paramName, value);
+      } else if (ClassUtils.isAssignable(paramType, Collection.class)){
+        Class<?> elementType = ReflectUtils.getActualTypeOfCollectionElement(params[0]);
+        Class<?> arrayClass = Array.newInstance(elementType, 10).getClass();
+        Object value = getSingleArray(arrayClass, justPrimitive);
+        data.put(paramName, value);
       } else {
         Map<String, Object> value = this.prepareTestData(paramType, justPrimitive);
         data.putAll(value);
@@ -117,6 +128,11 @@ public abstract class AbstractTestCase {
           data.put(paramName, value);
         } else if (ConverterFactory.SIMPLE_CONVERTERS.containsKey(paramType) || paramType.isPrimitive()) {
           Object value = new String[] { getSingleString(paramType, justPrimitive) };
+          data.put(paramName, value);
+        } else if (ClassUtils.isAssignable(paramType, Collection.class)){
+          Class<?> elementType = ReflectUtils.getActualTypeOfCollectionElement(params[i]);
+          Class<?> arrayClass = Array.newInstance(elementType, 10).getClass();
+          Object value = getSingleArray(arrayClass, justPrimitive);
           data.put(paramName, value);
         } else {
           Map<String, Object> paramData = this.prepareTestData(paramType, justPrimitive);

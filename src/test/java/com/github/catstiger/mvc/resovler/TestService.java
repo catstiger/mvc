@@ -2,6 +2,7 @@ package com.github.catstiger.mvc.resovler;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,6 +86,16 @@ public class TestService {
   public void testList(@Param("list")List<Long> list) {
     if(list == null || list.isEmpty()) {
       throw new RuntimeException("List is empty");
+    }
+  }
+  
+  @Api
+  public void testSet(@Param("dept") Department dept, @Param("set")Set<Long> set) {
+    if(set == null || set.isEmpty()) {
+      throw new RuntimeException("List is empty");
+    }
+    if(dept == null || dept.getList() == null || dept.getList().isEmpty()) {
+      throw new RuntimeException("Dept is empty or it's list is empty.");
     }
   }
 }

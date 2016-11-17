@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,14 +40,12 @@ public abstract class ConverterFactory {
     SIMPLE_CONVERTERS = Collections.unmodifiableMap(simpleConverters);
   }
   
-  private static final Map<Class<?>, ValueConverter<?>> SINGLE_TYPE_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);
+  private static final Map<Class<?>, ValueConverter<?>> SINGLE_TYPE_CONVERTERS = new ConcurrentHashMap<Class<?>, ValueConverter<?>>(100);
   static {
     SINGLE_TYPE_CONVERTERS.putAll(simpleConverters);
   }
   
-  private static final Map<Class<?>, ValueConverter<?>> ARRAY_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);
-  private static final Map<Class<?>, ValueConverter<?>> LIST_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);
-  private static final Map<Class<?>, ValueConverter<?>> SET_CONVERTERS = new HashMap<Class<?>, ValueConverter<?>>(100);
+  private static final Map<String, ValueConverter<?>> COLLECTION_CONVERTERS = new ConcurrentHashMap<String, ValueConverter<?>>(100);
   
   public static boolean isPojo(Class<?> clazz) {
     return (!clazz.isPrimitive() && !clazz.isArray() && !ConverterFactory.SIMPLE_CONVERTERS.containsKey(clazz) && clazz  != List.class && clazz != Set.class && clazz != Map.class);
@@ -68,27 +67,20 @@ public abstract class ConverterFactory {
     }
     
     ValueConverter<?> converter;
-    
-    if(ARRAY_CONVERTERS.containsKey(targetClass)) {
-      converter = ARRAY_CONVERTERS.get(targetClass);
-    } else if (LIST_CONVERTERS.containsKey(elementClass)) {
-      converter = LIST_CONVERTERS.get(elementClass);
-    } else if (SET_CONVERTERS.containsKey(elementClass)) {
-      converter = SET_CONVERTERS.get(elementClass);
-    } else if (SINGLE_TYPE_CONVERTERS.containsKey(targetClass)) {
-      converter = SINGLE_TYPE_CONVERTERS.get(targetClass);
+    if(elementClass != null) {
+      String key = targetClass.getName() + "@" + elementClass.getName();
+      if(COLLECTION_CONVERTERS.containsKey(key)) {
+        converter = COLLECTION_CONVERTERS.get(key);
+      } else {
+        converter = newConverter(targetClass, elementClass);
+        COLLECTION_CONVERTERS.put(key, converter);
+      }
     } else {
-      converter = newConverter(targetClass, elementClass);
-      if(converter != null) {
-        if(targetClass.isArray()) {
-          ARRAY_CONVERTERS.put(targetClass, converter);
-        } else if (List.class == targetClass) {
-          LIST_CONVERTERS.put(elementClass, converter);
-        } else if (Set.class == targetClass) {
-          SET_CONVERTERS.put(elementClass, converter);
-        } else {
-          SINGLE_TYPE_CONVERTERS.put(targetClass, converter);
-        }
+      if (SINGLE_TYPE_CONVERTERS.containsKey(targetClass)) {
+        converter = SINGLE_TYPE_CONVERTERS.get(targetClass);
+      } else {
+        converter = newConverter(targetClass, elementClass);
+        SINGLE_TYPE_CONVERTERS.put(targetClass, converter);
       }
     }
     
@@ -97,7 +89,6 @@ public abstract class ConverterFactory {
       converter = new StringValueConverter();
     }
     
-    //logger.debug("Class {} - Converter - {}", targetClass, converter.getClass());
     return converter;
   }
   

@@ -6,9 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.converter.ConverterFactory;
@@ -23,7 +20,6 @@ import com.github.catstiger.mvc.util.StringUtils;
 import strman.Strman;
 
 public abstract class ServiceInvoker {
-  private static Logger logger = LoggerFactory.getLogger(ServiceInvoker.class);
   /**
    * 
    * @param apiResource
@@ -74,21 +70,6 @@ public abstract class ServiceInvoker {
     return ReflectUtils.invokeMethod(method, svr, args);
   }
   
-  public static Class<?> getParameterActualType(Parameter parameter) {
-     Class<?> elementType = null;
-    
-    if(ClassUtils.isAssignable(parameter.getType(), Collection.class, false)) {
-      elementType = ReflectUtils.getActualTypeOfCollectionElement(parameter);
-      if(elementType == null) {
-        elementType = String.class;
-      }
-    } else if (parameter.getType().isArray()) {
-      elementType = parameter.getType().getComponentType();
-    }
-    
-    return elementType;
-  }
-  
   private static Object getParamValue(Parameter parameter, Map<String, Object> cascadedParams, int paramIndex) {
     if(CollectionUtils.isEmpty(cascadedParams)) {
       cascadedParams = Collections.emptyMap();
@@ -98,12 +79,25 @@ public abstract class ServiceInvoker {
     Class<?> elementType = getParameterActualType(parameter);
     
     ValueConverter<?> converter = ConverterFactory.getConverter(paramType, elementType);
-    logger.debug("转换器 {} {}", paramType.getName(), converter.getClass().getName());
-    
     Object value = cascadedParams.get(paramName);
     
     return converter.convert(value);
   }
+  
+  private static Class<?> getParameterActualType(Parameter parameter) {
+    Class<?> elementType = null;
+   
+   if(ClassUtils.isAssignable(parameter.getType(), Collection.class, false)) {
+     elementType = ReflectUtils.getActualTypeOfCollectionElement(parameter);
+     if(elementType == null) {
+       elementType = String.class;
+     }
+   } else if (parameter.getType().isArray()) {
+     elementType = parameter.getType().getComponentType();
+   }
+   
+   return elementType;
+ }
   
   public static String getParameterName(Parameter parameter, int paramIndex) {
     if(parameter == null) {
