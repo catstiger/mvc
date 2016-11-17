@@ -89,6 +89,14 @@ public class TestService {
     }
   }
   
+  @SuppressWarnings("rawtypes")
+  @Api
+  public void testListNoParam(@Param("list")List list) {
+    if(list == null || list.isEmpty()) {
+      throw new RuntimeException("List is empty");
+    }
+  }
+  
   @Api
   public void testSet(@Param("dept") Department dept, @Param("set")Set<Long> set) {
     if(set == null || set.isEmpty()) {

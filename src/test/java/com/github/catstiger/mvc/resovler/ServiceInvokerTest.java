@@ -350,6 +350,17 @@ public class ServiceInvokerTest extends AbstractTestCase {
     
     System.out.println(JSON.toJSONString(testParam, true));
     ServiceInvoker.invoke(api, testParam);
+    
+    api = ApiResHolder.getInstance().getApiResource("/test_service/test_list_no_param");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_list_no_param");
+    }
+    testData = this.prepareTestData(api.getMethod(), true);
+    testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    
+    System.out.println(JSON.toJSONString(testParam, true));
+    ServiceInvoker.invoke(api, testParam);
   }
   
   @Test

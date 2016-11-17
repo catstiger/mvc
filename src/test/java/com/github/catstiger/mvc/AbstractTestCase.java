@@ -72,6 +72,9 @@ public abstract class AbstractTestCase {
         data.put(name, value);
       } else if (ClassUtils.isAssignable(propType, Collection.class)){
         Class<?> elementType = ReflectUtils.getActualTypeOfCollectionElement(pd.getWriteMethod().getParameters()[0]);
+        if(elementType == null) {
+          elementType = String.class;
+        }
         Class<?> arrayClass = Array.newInstance(elementType, 10).getClass();
         value = getSingleArray(arrayClass, justPrimitive);
         data.put(name, value);
@@ -110,6 +113,9 @@ public abstract class AbstractTestCase {
         data.put(paramName, value);
       } else if (ClassUtils.isAssignable(paramType, Collection.class)){
         Class<?> elementType = ReflectUtils.getActualTypeOfCollectionElement(params[0]);
+        if(elementType == null) {
+          elementType = String.class;
+        }
         Class<?> arrayClass = Array.newInstance(elementType, 10).getClass();
         Object value = getSingleArray(arrayClass, justPrimitive);
         data.put(paramName, value);
@@ -131,6 +137,9 @@ public abstract class AbstractTestCase {
           data.put(paramName, value);
         } else if (ClassUtils.isAssignable(paramType, Collection.class)){
           Class<?> elementType = ReflectUtils.getActualTypeOfCollectionElement(params[i]);
+          if(elementType == null) {
+            elementType = String.class;
+          }
           Class<?> arrayClass = Array.newInstance(elementType, 10).getClass();
           Object value = getSingleArray(arrayClass, justPrimitive);
           data.put(paramName, value);
