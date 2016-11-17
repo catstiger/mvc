@@ -32,7 +32,7 @@ public class TestService {
   
   @Api
   public String testSingleBean(Employee employee) {
-    return JSON.toJSONString(employee, true);
+    return "";
   }
   
   @Api
@@ -43,7 +43,7 @@ public class TestService {
       dept.getCorp().setId(corpId);
     }
     
-    return JSON.toJSONString(emp, true);
+    return "";
   }
   
   @Api

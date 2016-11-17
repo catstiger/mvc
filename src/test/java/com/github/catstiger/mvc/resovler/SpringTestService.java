@@ -32,7 +32,7 @@ public class SpringTestService {
   
   @Api @Transactional
   public String testSingleBean(Employee employee) {
-    return JSON.toJSONString(employee, true);
+    return "";
   }
   
   @Api @Transactional
@@ -41,7 +41,7 @@ public class SpringTestService {
     dept.setCorp(new Corp());
     dept.getCorp().setId(corpId);
     
-    return JSON.toJSONString(emp, true);
+    return "";
   }
   
   @Api @Transactional

@@ -68,37 +68,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     String json = (String) ServiceInvoker.invoke(apiRes, params);
     assertNotNull(json);
   }
-  @Test
-  public void testSingleBeanManyTimes() {
-      Map<String, Object> map = new HashMap<String, Object>();
-      map.put("age", new String[]{"120"});
-      map.put("id", new String[]{"887777"});
-      map.put("birth", new String[] {"1996-11-08"});
-      map.put("age", new String[]{"21"});
-      map.put("score", new String[] {"900.98D"});
-      map.put("isActive", new String[] {"null"});
-      
-      
-      long b = new Date().getTime();
-      Map<String, Object> testParam;
-      
-      for(int i = 0; i < 100 * 10000; i++) {
-        testParam = new HashMap<String, Object>();
-        ValueMapUtils.inheritableParams(map, testParam);
-        ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_bean");
-        ServiceInvoker.invoke(api, testParam);
-      }
-      System.out.println((new Date().getTime() - b) / 1000 + "s");
-      
-      b = new Date().getTime();
-      testParam = new HashMap<String, Object>();
-      ValueMapUtils.inheritableParams(map, testParam);
-      ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_bean");
-      for(int i = 0; i < 100 * 10000; i++) {
-        ServiceInvoker.invoke(api, testParam);
-      }
-      System.out.println((new Date().getTime() - b) / 1000 + "s");
-  }
+  
   
   @Test
   public void testSingleBean() {
@@ -396,10 +366,61 @@ public class ServiceInvokerTest extends AbstractTestCase {
     long b = new Date().getTime();
     for(int i = 0; i < 100 * 10000; i++) {
       ServiceInvoker.invoke(api, testParam);
-      if(i % 1000 == 0) {
+    }
+    long a = new Date().getTime();
+    System.out.println((a - b) / 1000 + "s");
+  }
+  
+  @Test
+  public void testAnyManyTimes() {
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_any");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_any");
+    }
+    
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    
+    long b = new Date().getTime();
+    for(int i = 0; i < 100 * 10000; i++) {
+      ServiceInvoker.invoke(api, testParam);
+    }
+    long a = new Date().getTime();
+    System.out.println((a - b) / 1000 + "s");
+  }
+  
+  /**
+   * 多线程测试
+   */
+  @SuppressWarnings("static-access")
+  @Test
+  public void testAnySpringMultithreads() {
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_any");
+    if(api == null) {
+      throw new RuntimeException("404, /spring_test_service/test_any");
+    }
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    Runnable task = new Runnable() {
+      @Override
+      public void run() {
+        long b = new Date().getTime();
+        for(int i = 0; i < 10000; i++) {
+          ServiceInvoker.invoke(api, testParam);
+        }
         long a = new Date().getTime();
-        System.out.println((a - b) / 1000 + "s");
+        System.out.println(Thread.currentThread().getName()  + " : " + (a - b) / 1000 + "s");
       }
+    };
+    for(int i = 0; i < 100; i ++) {
+      new Thread(task, "Task " + i).start();
+    }
+    try {
+      Thread.currentThread().sleep(30L * 1000L);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
   
@@ -417,20 +438,58 @@ public class ServiceInvokerTest extends AbstractTestCase {
     long b = new Date().getTime();
     for(int i = 0; i < 100 * 10000; i++) {
       ServiceInvoker.invoke(api, testParam);
-      if(i % 1000 == 0) {
-        long a = new Date().getTime();
-        System.out.println((a - b) / 1000 + "s");
+    }
+    long a = new Date().getTime();
+    System.out.println((a - b) / 1000 + "s");
+  }
+  
+  @Test
+  public void testSingleBeanManyTimes() {
+      Map<String, Object> map = new HashMap<String, Object>();
+      
+      long b = new Date().getTime();
+      Map<String, Object> testParam = new HashMap<String, Object>();
+      ValueMapUtils.inheritableParams(map, testParam);
+      ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_bean");
+      for(int i = 0; i < 100 * 10000; i++) {
+        ServiceInvoker.invoke(api, testParam);
       }
+      System.out.println((new Date().getTime() - b) / 1000 + "s");
+  }
+  
+  @SuppressWarnings("static-access")
+  @Test
+  public void testSingleBeanSpringMultithreads() {
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_single_bean");
+    if(api == null) {
+      throw new RuntimeException("404, /spring_test_service/test_single_bean");
+    }
+    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    ValueMapUtils.inheritableParams(testData, testParam);
+    Runnable task = new Runnable() {
+      @Override
+      public void run() {
+        long b = new Date().getTime();
+        for(int i = 0; i < 10000; i++) {
+          ServiceInvoker.invoke(api, testParam);
+        }
+        long a = new Date().getTime();
+        System.out.println(Thread.currentThread().getName()  + " : " + (a - b) / 1000 + "s");
+      }
+    };
+    for(int i = 0; i < 100; i ++) {
+      new Thread(task, "Task " + i).start();
+    }
+    try {
+      Thread.currentThread().sleep(20L * 1000L);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
   
   @Test
   public void testPrimitiveSpring() {
-    //ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:applicationContext-test.xml");
-    //SpringHelper.initApplicationContext(ctx);
-    
-    
-    
     ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_primitive");
     if(api == null) {
       throw new RuntimeException("404, /spring_test_service/test_primitive");
