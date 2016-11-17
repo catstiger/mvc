@@ -9,15 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.github.catstiger.mvc.annotation.Api;
+import com.github.catstiger.mvc.annotation.API;
+import com.github.catstiger.mvc.annotation.Domain;
 import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.converter.Corp;
 import com.github.catstiger.mvc.converter.Department;
 import com.github.catstiger.mvc.converter.Employee;
+import com.github.catstiger.mvc.converter.TestValueConverter;
 
-@Api @Service
+@Domain @Service
 public class SpringTestService {
-  @Api @Transactional
+  @API @Transactional
   public String testPrimitive(@Param("age") int age, @Param("score") double score, @Param("id") long id,
         @Param("birth") Date birth, @Param("isActive") boolean isActive) {
     Employee emp = new Employee();
@@ -30,12 +32,12 @@ public class SpringTestService {
     return JSON.toJSONString(emp, true);
   }
   
-  @Api @Transactional
+  @API @Transactional
   public String testSingleBean(Employee employee) {
     return "";
   }
   
-  @Api @Transactional
+  @API @Transactional
   public String testAny(@Param("emp") Employee emp, @Param("dept") Department dept, @Param("corpId") Long corpId) {
     emp.setDept(dept);
     dept.setCorp(new Corp());
@@ -44,23 +46,23 @@ public class SpringTestService {
     return "";
   }
   
-  @Api @Transactional
+  @API @Transactional
   public String testSingleValue(@Param("data") Double value) {
     return String.valueOf(value);
   }
   
-  @Api @Transactional
+  @API @Transactional
   public String testSinglePrimitiveArray(@Param("dbl") double [] dbl) {
     return JSON.toJSONString(dbl);
   }
   
-  @Api @Transactional
+  @API @Transactional
   public String testSingleDateArray(@Param("dates") Date[] date) {
     return JSON.toJSONString(date, SerializerFeature.WriteDateUseDateFormat);
   }
   
   
-  @Api @Transactional
+  @API @Transactional
   public void testHttpAndOther(@Param("emp") Employee emp, @Param("dept") Department dept, HttpServletRequest request) {
     if(emp == null) {
       throw new RuntimeException("Employee is null.");
@@ -68,6 +70,13 @@ public class SpringTestService {
     
     if(request == null) {
       throw new RuntimeException("HttpServletRequest is null.");
+    }
+  }
+  
+  @API
+  public void testCustomerConverter(@Param(value = "param", converter = TestValueConverter.class) String name) {
+    if(!"catstiger@gmail.com".equals(name)) {
+      throw new RuntimeException(name);
     }
   }
 }

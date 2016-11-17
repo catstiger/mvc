@@ -393,7 +393,6 @@ public class ServiceInvokerTest extends AbstractTestCase {
   /**
    * 多线程测试
    */
-  @SuppressWarnings("static-access")
   @Test
   public void testAnySpringMultithreads() {
     ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_any");
@@ -416,11 +415,6 @@ public class ServiceInvokerTest extends AbstractTestCase {
     };
     for(int i = 0; i < 100; i ++) {
       new Thread(task, "Task " + i).start();
-    }
-    try {
-      Thread.currentThread().sleep(30L * 1000L);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     }
   }
   
@@ -457,7 +451,6 @@ public class ServiceInvokerTest extends AbstractTestCase {
       System.out.println((new Date().getTime() - b) / 1000 + "s");
   }
   
-  @SuppressWarnings("static-access")
   @Test
   public void testSingleBeanSpringMultithreads() {
     ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_single_bean");
@@ -481,11 +474,6 @@ public class ServiceInvokerTest extends AbstractTestCase {
     for(int i = 0; i < 100; i ++) {
       new Thread(task, "Task " + i).start();
     }
-    try {
-      Thread.currentThread().sleep(20L * 1000L);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
   
   @Test
@@ -501,5 +489,26 @@ public class ServiceInvokerTest extends AbstractTestCase {
     
     String json = (String) ServiceInvoker.invoke(api, testParam);
     System.out.println(json);
+  }
+  
+  @Test
+  public void testCustomerConverter() {
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_customer_converter");
+    if(api == null) {
+      throw new RuntimeException("404, /spring_test_service/test_customer_converter");
+    }
+    Map<String, Object> testParam = new HashMap<String, Object>();
+    testParam.put("param", "ddd");
+    ServiceInvoker.invoke(api, testParam);
+    
+    api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_customer_converter");
+    if(api == null) {
+      throw new RuntimeException("404, /test_service/test_customer_converter");
+    }
+    testParam = new HashMap<String, Object>();
+    testParam.put("param", "ddd");
+    ServiceInvoker.invoke(api, testParam);
+    
+    
   }
 }

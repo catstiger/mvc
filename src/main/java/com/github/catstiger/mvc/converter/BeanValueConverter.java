@@ -38,14 +38,7 @@ public class BeanValueConverter implements ValueConverter<Object> {
       return null;
     }
     
-    Object result = null;
-    
-    try {
-      result = targetType.newInstance();
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
+    Object result = ReflectUtils.instantiate(targetType);// targetType.newInstance();
     
     Map<String, Object> valueMap = (Map<String, Object>) value;
     PropertyDescriptor[] propertyDescs = ReflectUtils.getPropertyDescriptors(targetType);

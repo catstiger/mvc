@@ -1,5 +1,6 @@
 package com.github.catstiger.mvc.converter;
 
+import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -16,12 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.util.ClassUtils;
+import com.github.catstiger.mvc.util.ReflectUtils;
 
 public abstract class ConverterFactory {
   private static Logger logger = LoggerFactory.getLogger(ConverterFactory.class);
   
-  private static final Map<Class<?>, ValueConverter<?>> simpleConverters = new HashMap<Class<?>, ValueConverter<?>>(100);
+  private static final Map<Class<?>, ValueConverter<?>> simpleConverters = new HashMap<Class<?>, ValueConverter<?>>(160);
   public static final Map<Class<?>, ValueConverter<?>> SIMPLE_CONVERTERS;
   static {
     simpleConverters.put(Long.class, new LongValueConverter());
@@ -40,12 +43,14 @@ public abstract class ConverterFactory {
     SIMPLE_CONVERTERS = Collections.unmodifiableMap(simpleConverters);
   }
   
-  private static final Map<Class<?>, ValueConverter<?>> SINGLE_TYPE_CONVERTERS = new ConcurrentHashMap<Class<?>, ValueConverter<?>>(100);
+  private static final Map<Class<?>, ValueConverter<?>> SINGLE_TYPE_CONVERTERS = new ConcurrentHashMap<Class<?>, ValueConverter<?>>(160);
   static {
     SINGLE_TYPE_CONVERTERS.putAll(simpleConverters);
   }
   
-  private static final Map<String, ValueConverter<?>> COLLECTION_CONVERTERS = new ConcurrentHashMap<String, ValueConverter<?>>(100);
+  private static final Map<Class<?>, ValueConverter<?>> CUSTOMER_CONVERTERS = new ConcurrentHashMap<Class<?>, ValueConverter<?>>(160);
+  
+  private static final Map<String, ValueConverter<?>> COLLECTION_CONVERTERS = new ConcurrentHashMap<String, ValueConverter<?>>(160);
   
   public static boolean isPojo(Class<?> clazz) {
     return (!clazz.isPrimitive() && !clazz.isArray() && !ConverterFactory.SIMPLE_CONVERTERS.containsKey(clazz) && clazz  != List.class && clazz != Set.class && clazz != Map.class);
@@ -91,6 +96,39 @@ public abstract class ConverterFactory {
     
     return converter;
   }
+  
+  public static ValueConverter<?> getConverter(Parameter parameter) {
+    if(parameter == null) {
+      throw new RuntimeException("Parameter must not be null.");
+    }
+    //如果参数标注了转换器
+    Param paramAnnotation = parameter.getAnnotation(Param.class);
+    if(paramAnnotation != null) {
+      Class<?> converterClass = paramAnnotation.converter();
+      if(converterClass != null) {
+        if(converterClass != ValueConverter.None.class) {
+          if(CUSTOMER_CONVERTERS.containsKey(converterClass)) {
+            return CUSTOMER_CONVERTERS.get(converterClass);
+          } else {
+            ValueConverter<?> converter = (ValueConverter<?>) ReflectUtils.instantiate(converterClass);
+            CUSTOMER_CONVERTERS.put(converterClass, converter);
+            return converter;
+          }
+        }
+      }
+    }
+    //如果没有标注转换器，则自动根据参数类型构造转换器
+    Class<?> paramType = parameter.getType();
+    Class<?> elementType = ReflectUtils.getParameterActualType(parameter);
+
+    ValueConverter<?> converter = ConverterFactory.getConverter(paramType, elementType);
+    if(converter == null) {
+      throw new RuntimeException("No ValueConverter found.");
+    }
+    return converter;
+  }
+  
+  
   
   
   private static ValueConverter<?> newConverter(Class<?> targetClass, Class<?> elementClass) {

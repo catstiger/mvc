@@ -24,7 +24,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import com.github.catstiger.mvc.annotation.Api;
+import com.github.catstiger.mvc.annotation.API;
+import com.github.catstiger.mvc.annotation.Domain;
 import com.github.catstiger.mvc.service.ServiceProvider;
 import com.github.catstiger.mvc.util.StringUtils;
 
@@ -157,8 +158,8 @@ public final class Initializer {
     if(clazz == null) {
       return Collections.emptyList();
     }
-    Api classApiAnn = clazz.getAnnotation(Api.class);  
-    if(classApiAnn == null) {
+    Domain domainAnnotaion = clazz.getAnnotation(Domain.class);  
+    if(domainAnnotaion == null) {
       return Collections.emptyList();
     }
     
@@ -167,8 +168,8 @@ public final class Initializer {
       return Collections.emptyList();
     }
     
-    Boolean isSingleton = (!isSpringBean(clazz) && classApiAnn.singleton());
-    String uriPrefix = classApiAnn.value(); //如果Aai定义了URI前缀，那么使用Api定义的
+    Boolean isSingleton = (!isSpringBean(clazz) && domainAnnotaion.singleton());
+    String uriPrefix = domainAnnotaion.value(); //如果Aai定义了URI前缀，那么使用Api定义的
     
     if(StringUtils.isBlank(uriPrefix)) { //如果没有定义，则根据serviceId或者类名确定URL
       if(isSpringBean(clazz)) {
@@ -186,12 +187,12 @@ public final class Initializer {
     List<ApiResource> apiReses = new ArrayList<ApiResource>(methods.length);
     
     for(Method method : methods) {
-      Api methodApiAnn = method.getAnnotation(Api.class);
-      if(methodApiAnn == null) {
+      API apiAnnotation = method.getAnnotation(API.class);
+      if(apiAnnotation == null) {
         continue;
       }
       
-      String uriSuffix = methodApiAnn.value(); //如果Aai定义了URI后缀，那么使用Api定义的
+      String uriSuffix = apiAnnotation.value(); //如果Aai定义了URI后缀，那么使用Api定义的
       if(StringUtils.isBlank(uriSuffix)) {
         uriSuffix = "/" + Strman.toSnakeCase(method.getName());
       }
@@ -314,7 +315,7 @@ public final class Initializer {
                     try {
                       // 添加到classes
                       Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className);
-                      if(isApi(clazz)) {
+                      if(isApiDomain(clazz)) {
                         logger.debug("Service found [{}]", clazz.getSimpleName());
                         classes.add(clazz);
                       }
@@ -368,7 +369,7 @@ public final class Initializer {
         try {
           // 经过回复同学的提醒，这里用forName有一些不好，会触发static方法，没有使用classLoader的load干净
           Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className);
-          if(isApi(clazz)) {
+          if(isApiDomain(clazz)) {
             logger.debug("Service found [{}]", clazz.getSimpleName());
             classes.add(clazz);
           }
@@ -379,11 +380,11 @@ public final class Initializer {
     }
   }
   
-  private static Boolean isApi(Class<?> clazz) {
+  private static Boolean isApiDomain(Class<?> clazz) {
     if(clazz == null) {
       return null;
     }
-    Api apiAnn = clazz.getAnnotation(Api.class);
+    Domain apiAnn = clazz.getAnnotation(Domain.class);
     return apiAnn != null;
   }
   /**

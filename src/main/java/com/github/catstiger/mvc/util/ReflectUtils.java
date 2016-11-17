@@ -17,8 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.BeansException;
+
+import com.github.catstiger.mvc.annotation.Param;
+
+import strman.Strman;
 
 public final class ReflectUtils {
   /**
@@ -56,7 +59,7 @@ public final class ReflectUtils {
    * class-loading issues.
    * @param clazz class to instantiate
    * @return the new instance
-   * @throws BeanInstantiationException if the bean cannot be instantiated
+   * @throws RuntimeException if the bean cannot be instantiated
    */
   public static <T> T instantiate(Class<T> clazz) {
     if(clazz == null) {
@@ -344,6 +347,43 @@ public final class ReflectUtils {
       return (Class<?>) elementType.getActualTypeArguments()[0];
     }
     return null;
+  }
+  
+  /**
+   * 返回参数的“真实类型”，所谓“真实类型”，指的是，如果这个参数为Array或者Collection的时候，它的元素的类型。
+   * @param parameter 参数
+   * @return
+   */
+  public static Class<?> getParameterActualType(Parameter parameter) {
+    Class<?> elementType = null;
+
+    if (ClassUtils.isAssignable(parameter.getType(), Collection.class, false)) {
+      elementType = ReflectUtils.getActualTypeOfCollectionElement(parameter);
+      if (elementType == null) {
+        elementType = String.class;
+      }
+    } else if (parameter.getType().isArray()) {
+      elementType = parameter.getType().getComponentType();
+    }
+
+    return elementType;
+  }
+  
+  public static String getParameterName(Parameter parameter, int paramIndex) {
+    if (parameter == null) {
+      return null;
+    }
+    // 对于Present的名字，直接返回参数名称
+    if (parameter.isNamePresent()) {
+      return parameter.getName();
+    }
+    // 对于用Param标注的参数，返回Param规定的名称
+    Param param = parameter.getAnnotation(Param.class);
+    if (param != null && StringUtils.isNotBlank(param.value())) {
+      return param.value();
+    }
+    // 对于进没有Present也没有@Param的参数，返回参数类名（驼峰命名）+参数位置索引
+    return Strman.toCamelCase(parameter.getType().getSimpleName()) + paramIndex;
   }
   
   private static LinkedList<Field> fields(Class<?> clazz) {

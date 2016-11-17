@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.converter.ConverterFactory;
-import com.github.catstiger.mvc.resovler.ServiceInvoker;
 import com.github.catstiger.mvc.util.ClassUtils;
 import com.github.catstiger.mvc.util.ReflectUtils;
 import com.github.catstiger.mvc.util.StringUtils;
@@ -104,7 +103,7 @@ public abstract class AbstractTestCase {
     if (params.length == 1) {
       logger.debug("Generic single parameter value.");
       Class<?> paramType = params[0].getType();
-      String paramName = ServiceInvoker.getParameterName(params[0], 0);
+      String paramName = ReflectUtils.getParameterName(params[0], 0);
       
       if(ConverterFactory.SIMPLE_CONVERTERS.containsKey(paramType) || paramType.isPrimitive()) {
         data.put(paramName, new String[]{getSingleString(paramType, justPrimitive)});
@@ -128,7 +127,7 @@ public abstract class AbstractTestCase {
       
       for (int i = 0; i < params.length; i++) {
         Class<?> paramType = params[i].getType();
-        String paramName = ServiceInvoker.getParameterName(params[i], i);
+        String paramName = ReflectUtils.getParameterName(params[i], i);
         if (paramType.isArray()) {
           Object value = getSingleArray(paramType, justPrimitive);
           data.put(paramName, value);

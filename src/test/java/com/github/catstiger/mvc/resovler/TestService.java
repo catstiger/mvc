@@ -9,15 +9,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.github.catstiger.mvc.annotation.Api;
+import com.github.catstiger.mvc.annotation.API;
+import com.github.catstiger.mvc.annotation.Domain;
 import com.github.catstiger.mvc.annotation.Param;
 import com.github.catstiger.mvc.converter.Corp;
 import com.github.catstiger.mvc.converter.Department;
 import com.github.catstiger.mvc.converter.Employee;
+import com.github.catstiger.mvc.converter.TestValueConverter;
 
-@Api
+@Domain
 public class TestService {
-  @Api
+  @API
   public String testPrimitive(@Param("age") int age, @Param("score") double score, @Param("id") long id,
         @Param("birth") Date birth, @Param("isActive") boolean isActive) {
     Employee emp = new Employee();
@@ -30,12 +32,12 @@ public class TestService {
     return JSON.toJSONString(emp, true);
   }
   
-  @Api
+  @API
   public String testSingleBean(Employee employee) {
     return "";
   }
   
-  @Api
+  @API
   public String testAny(@Param("emp") Employee emp, @Param("dept") Department dept, @Param("corpId") Long corpId) {
     emp.setDept(dept);
     if(dept != null) {
@@ -46,27 +48,27 @@ public class TestService {
     return "";
   }
   
-  @Api
+  @API
   public String testSingleValue(@Param("data") Double value) {
     return String.valueOf(value);
   }
   
-  @Api
+  @API
   public String testSinglePrimitiveArray(@Param("dbl") double [] dbl) {
     return JSON.toJSONString(dbl);
   }
   
-  @Api
+  @API
   public String testSingleDateArray(@Param("dates") Date[] date) {
     return JSON.toJSONString(date, SerializerFeature.WriteDateUseDateFormat);
   }
   
-  @Api
+  @API
   public void testEmptyArgs() {
     
   }
   
-  @Api
+  @API
   public void testHttp(HttpServletRequest request, HttpServletResponse response) {
     if(request == null || response == null) {
       throw new RuntimeException("Request or response is null");
@@ -74,7 +76,7 @@ public class TestService {
     System.out.print("HTTP TEST OK");
   }
   
-  @Api
+  @API
   public void testRequest(HttpServletRequest request) {
     if(request == null) {
       throw new RuntimeException("Request is null");
@@ -82,7 +84,7 @@ public class TestService {
     System.out.print("HTTP TEST OK");
   }
   
-  @Api
+  @API
   public void testList(@Param("list")List<Long> list) {
     if(list == null || list.isEmpty()) {
       throw new RuntimeException("List is empty");
@@ -90,20 +92,27 @@ public class TestService {
   }
   
   @SuppressWarnings("rawtypes")
-  @Api
+  @API
   public void testListNoParam(@Param("list")List list) {
     if(list == null || list.isEmpty()) {
       throw new RuntimeException("List is empty");
     }
   }
   
-  @Api
+  @API
   public void testSet(@Param("dept") Department dept, @Param("set")Set<Long> set) {
     if(set == null || set.isEmpty()) {
       throw new RuntimeException("List is empty");
     }
     if(dept == null || dept.getList() == null || dept.getList().isEmpty()) {
       throw new RuntimeException("Dept is empty or it's list is empty.");
+    }
+  }
+  
+  @API
+  public void testCustomerConverter(@Param(value = "param", converter = TestValueConverter.class) String name) {
+    if(!"catstiger@gmail.com".equals(name)) {
+      throw new RuntimeException(name);
     }
   }
 }

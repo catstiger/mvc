@@ -1,8 +1,7 @@
 package com.github.catstiger.mvc.service;
 
-import org.springframework.cglib.core.ReflectUtils;
-
 import com.github.catstiger.mvc.config.ApiResource;
+import com.github.catstiger.mvc.util.ReflectUtils;
 
 public class ServiceProviderCreate implements ServiceProvider {
 
@@ -25,7 +24,7 @@ public class ServiceProviderCreate implements ServiceProvider {
     Class<?> clazz;
     try {
       clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-      return ReflectUtils.newInstance(clazz);
+      return ReflectUtils.instantiate(clazz);
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       return null;
