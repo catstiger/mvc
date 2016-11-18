@@ -37,7 +37,7 @@ public class MvcFilter implements Filter {
     RequestObjectHolder.setRequest(req);
     RequestObjectHolder.setResponse(resp);
     RequestObjectHolder.setRequestParameters(req.getParameterMap());
-    
+    logger.debug(req.getRequestURI());
     String serviceUri = RequestParser.getRequestUri(req);
     ApiResource apiRes = ApiResHolder.getInstance().getApiResource(serviceUri);
     if(apiRes != null) {

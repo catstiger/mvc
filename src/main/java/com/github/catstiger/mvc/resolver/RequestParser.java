@@ -111,7 +111,7 @@ public abstract class RequestParser {
     }
     
     return (Strman.endsWith(uri, DATA_TYPE_JSON, false) 
-        || (!Strman.endsWith(uri, DATA_TYPE_TEXT, false) && !Strman.endsWith(uri, DATA_TYPE_HTM, false)  && !Strman.endsWith(uri, DATA_TYPE_HTM, false)));
+        || (!Strman.endsWith(uri, DATA_TYPE_TEXT, false) && !Strman.endsWith(uri, DATA_TYPE_HTM, false)  && !Strman.endsWith(uri, DATA_TYPE_HTML, false)));
   }
   
 }

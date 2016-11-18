@@ -15,6 +15,8 @@ public final class ResolverFactory {
   private static Map<String, ResponseResolver> successResolverCache = new ConcurrentHashMap<String, ResponseResolver>(160);
   private static final ResponseResolver DEFAULT_JSON_505 = new DefaultJson505Resolver();
   private static final ResponseResolver DEFAULT_JSP_505 = new DefaultJsp505Resolver();
+  private static final ResponseResolver DEFAULT_JSON = new DefaultJsonSuccessResolver();
+  private static final ResponseResolver DEFAULT_JSP = new DefaultJspSuccessResolver();
   
   
   /**
@@ -23,37 +25,35 @@ public final class ResolverFactory {
    * @return 
    */
   public static ResponseResolver getSuccessResolver(HttpServletRequest request) {
-    String uri = RequestParser.getRequestUri(request);
+    String uri = request.getRequestURI();
     if(uri == null) {
       uri = "";
     }
-    
-    ApiResource apiResource = ApiResHolder.getInstance().getApiResource(uri);
-    
     if(successResolverCache.containsKey(uri)) {
       return successResolverCache.get(uri);
     }
+    //处理自定义Resolver
+    String serviceId = RequestParser.getRequestUri(request);
+    ApiResource apiResource = ApiResHolder.getInstance().getApiResource(serviceId);
     
-    ResponseResolver resolver;
+    
     Method method = apiResource.getMethod();
     if(method != null) {
       API api = method.getAnnotation(API.class);
       if(api != null) {
         if(api.resolver() != ResponseResolver.None.class) {
-          resolver = ReflectUtils.instantiate(api.resolver());
+          ResponseResolver resolver = ReflectUtils.instantiate(api.resolver());
           successResolverCache.put(uri, resolver);
           return resolver;
         }
       }
     }
-    
+    //处理缺省Resolver
     if(RequestParser.isJsonRequest(request)) {
-      resolver = new DefaultJsonSuccessResolver();  
+      return DEFAULT_JSON;
     } else {
-      resolver = new DefaultJspSuccessResolver();
+      return DEFAULT_JSP;
     }
-    successResolverCache.put(uri, resolver);
-    return resolver;
   }
   
   /**
