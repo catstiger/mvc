@@ -391,33 +391,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     System.out.println((a - b) / 1000 + "s");
   }
   
-  /**
-   * 多线程测试
-   */
-  @Test
-  public void testAnySpringMultithreads() {
-    ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_any");
-    if(api == null) {
-      throw new RuntimeException("404, /spring_test_service/test_any");
-    }
-    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
-    Runnable task = new Runnable() {
-      @Override
-      public void run() {
-        long b = new Date().getTime();
-        for(int i = 0; i < 10000; i++) {
-          ServiceInvoker.invoke(api, testParam);
-        }
-        long a = new Date().getTime();
-        System.out.println(Thread.currentThread().getName()  + " : " + (a - b) / 1000 + "s");
-      }
-    };
-    for(int i = 0; i < 100; i ++) {
-      new Thread(task, "Task " + i).start();
-    }
-  }
+  
   
   @Test
   public void testSingleBeanSpringManyTimes() {
@@ -452,30 +426,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
       System.out.println((new Date().getTime() - b) / 1000 + "s");
   }
   
-  @Test
-  public void testSingleBeanSpringMultithreads() {
-    ApiResource api = ApiResHolder.getInstance().getApiResource("/spring_test_service/test_single_bean");
-    if(api == null) {
-      throw new RuntimeException("404, /spring_test_service/test_single_bean");
-    }
-    Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
-    Runnable task = new Runnable() {
-      @Override
-      public void run() {
-        long b = new Date().getTime();
-        for(int i = 0; i < 10000; i++) {
-          ServiceInvoker.invoke(api, testParam);
-        }
-        long a = new Date().getTime();
-        System.out.println(Thread.currentThread().getName()  + " : " + (a - b) / 1000 + "s");
-      }
-    };
-    for(int i = 0; i < 100; i ++) {
-      new Thread(task, "Task " + i).start();
-    }
-  }
+  
   
   @Test
   public void testPrimitiveSpring() {
