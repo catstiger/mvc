@@ -1,5 +1,8 @@
 package com.github.catstiger.mvc.resolver;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -17,6 +20,25 @@ public abstract class RequestParser {
   public static final String DATA_TYPE_HTM = ".htm";
   public static final String DATA_TYPE_HTML = ".html";
   
+  public static final Set<String> STATIC_URI = new HashSet<String>(20);
+  static {
+    STATIC_URI.add(".doc");
+    STATIC_URI.add(".xls");
+    STATIC_URI.add(".xlsx");
+    STATIC_URI.add(".docx");
+    STATIC_URI.add(".ppt");
+    STATIC_URI.add(".pptx");
+    STATIC_URI.add(".jpg");
+    STATIC_URI.add(".png");
+    STATIC_URI.add(".bmp");
+    STATIC_URI.add(".js");
+    STATIC_URI.add(".css");
+    STATIC_URI.add(".html");
+    STATIC_URI.add(".htm");
+    STATIC_URI.add(".text");
+    STATIC_URI.add(".jpeg");
+    STATIC_URI.add(".swf");
+  }
   /**
    * 剔除URI中的前缀，后缀，最终得到可以lookup action的URI片段
    * @param request HttpServletRequest
@@ -43,6 +65,18 @@ public abstract class RequestParser {
     }
     
     return uri;
+  }
+  
+  public static boolean isStatic(String uri) {
+    if(uri == null) {
+      throw new RuntimeException("URI must not be null");
+    }
+    int dotIndex = uri.indexOf(".");
+    if(dotIndex < 0) {
+      return false;
+    }
+    String ext = uri.substring(dotIndex);
+    return STATIC_URI.contains(ext);
   }
   
   /**

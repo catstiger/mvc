@@ -43,11 +43,12 @@ public class MvcFilter implements Filter {
     if(apiRes != null) {
       doService(req, resp, apiRes);
     } 
+    else if (RequestParser.isStatic(req.getRequestURI())) {
+      chain.doFilter(request, response);
+    } 
     else { //找不到对应的Service，404错误
-      logger.debug("404 {}", req.getRequestURI());
       resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
       resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-      chain.doFilter(request, response);
     }
   }
   
