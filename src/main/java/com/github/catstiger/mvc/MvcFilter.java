@@ -38,11 +38,13 @@ public class MvcFilter implements Filter {
     RequestObjectHolder.setResponse(resp);
     RequestObjectHolder.setRequestParameters(req.getParameterMap());
     logger.debug(req.getRequestURI());
+    
     String serviceUri = RequestParser.getRequestUri(req);
     ApiResource apiRes = ApiResHolder.getInstance().getApiResource(serviceUri);
+   
     if(apiRes != null) {
       doService(req, resp, apiRes);
-    } 
+    }
     else if (RequestParser.isStatic(req.getRequestURI())) {
       chain.doFilter(request, response);
     } 

@@ -33,23 +33,17 @@ public final class ApiResHolder {
     apiMapping.put(apiResource.getUri(), apiResource);
   }
   
-  /**
-   * 根据URI，获取处理此URI的ApiResource对象，URI可以与原始URI不同，支持下划线，横杠作为字符分隔符，例如:<br>
-   * /cats_tiger/do_something可以匹配/catsTiger/doSomething
-   * @param uri
-   * @return
-   */
-  public ApiResource getApiResource(String uri) {
-    if(StringUtils.isBlank(uri)) {
+  public ApiResource getApiResource(String serviceId) {
+    if(StringUtils.isBlank(serviceId)) {
       logger.debug("Required uri is blank.");
       return null;
     }
-    if(uri.endsWith("/")) {
-      uri = Strman.removeRight(uri, "/");
+    if(serviceId.endsWith("/")) {
+      serviceId = Strman.removeRight(serviceId, "/");
     }
     
-    if(apiMapping.containsKey(uri)) { //直接根据URI返回对应的ApiResource对象
-      return apiMapping.get(uri);
+    if(apiMapping.containsKey(serviceId)) { //直接根据URI返回对应的ApiResource对象
+      return apiMapping.get(serviceId);
     }
     
     return null;

@@ -34,7 +34,6 @@ public abstract class RequestParser {
     STATIC_URI.add(".js");
     STATIC_URI.add(".css");
     STATIC_URI.add(".html");
-    STATIC_URI.add(".htm");
     STATIC_URI.add(".text");
     STATIC_URI.add(".jpeg");
     STATIC_URI.add(".swf");
@@ -111,7 +110,7 @@ public abstract class RequestParser {
     }
     
     return (Strman.endsWith(uri, DATA_TYPE_JSON, false) 
-        || (!Strman.endsWith(uri, DATA_TYPE_TEXT, false) && !Strman.endsWith(uri, DATA_TYPE_HTM, false)  && !Strman.endsWith(uri, DATA_TYPE_HTML, false)));
+        || (!Strman.endsWith(uri, DATA_TYPE_TEXT, false) && !Strman.endsWith(uri, DATA_TYPE_HTM, false)));
   }
   
 }
