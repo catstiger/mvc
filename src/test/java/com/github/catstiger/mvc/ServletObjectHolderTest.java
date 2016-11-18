@@ -25,8 +25,8 @@ public class ServletObjectHolderTest extends TestCase {
     params.put("leader.sex", new String[] {"1"});
     
     
-    ServletObjectHolder.setRequestParameters(params);
-    Map<String, Object> map = ServletObjectHolder.getInheritableParams();
+    RequestObjectHolder.setRequestParameters(params);
+    Map<String, Object> map = RequestObjectHolder.getInheritableParams();
     
     String json = JSON.toJSONString(map, true);
     System.out.println(json);

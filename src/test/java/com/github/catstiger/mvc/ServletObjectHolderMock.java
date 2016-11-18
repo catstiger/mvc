@@ -13,11 +13,11 @@ public class ServletObjectHolderMock {
   public static void init() {
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-    ServletObjectHolder.setRequest(request);
-    ServletObjectHolder.setResponse(response);
+    RequestObjectHolder.setRequest(request);
+    RequestObjectHolder.setResponse(response);
   }
   
   public static void setRequestParameters(Map<String, Object> params) {
-    ServletObjectHolder.setRequestParameters(params);
+    RequestObjectHolder.setRequestParameters(params);
   }
 }

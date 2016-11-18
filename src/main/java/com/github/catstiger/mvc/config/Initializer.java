@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.FilterConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +68,9 @@ public final class Initializer {
   public static final String INIT_PARAM_URI_PREFIX = "uriPrefix";
   public static final String DEFAULT_URI_PREFIX = "";
   
+  /**
+   * 存放JSP文件的目录，缺省为{@value #DEFAULT_PAGE_FOLDER}
+   */
   public static final String INIT_PARAM_PAGE_FOLDER = "pageFolder";
   public static final String DEFAULT_PAGE_FOLDER = "/WEB-INF/views";
   
@@ -77,6 +80,7 @@ public final class Initializer {
   private String minuteFormat = DEFAULT_MINUTE_FORMAT;
   private String uriPrefix = DEFAULT_URI_PREFIX;
   private String pageFolder = DEFAULT_PAGE_FOLDER;
+  private String realPath;
   
   private static Initializer instance = null;
 
@@ -112,7 +116,7 @@ public final class Initializer {
   /**
    * @see {@link #loadApiResources(String)}
    */
-  public void loadApiResources(ServletConfig config) {
+  public void loadApiResources(FilterConfig config) {
     String basePackage = config.getInitParameter(INIT_PARAM_BASE_PACKAGE);
     loadApiResources(basePackage);
   }
@@ -120,7 +124,9 @@ public final class Initializer {
   /**
    * 加载初始化参数
    */
-  public void initParams(ServletConfig config) {
+  public void initParams(FilterConfig config) {
+    realPath = config.getServletContext().getRealPath("");
+    
     dateFormat = config.getInitParameter(INIT_PARAM_DATE_FORMAT);
     if(StringUtils.isBlank(dateFormat)) {
       dateFormat = DEFAULT_DATE_FORMAT;
@@ -419,8 +425,15 @@ public final class Initializer {
     return uriPrefix;
   }
 
+  /**
+   * 存放JSP文件的目录，缺省为{@value #DEFAULT_PAGE_FOLDER}
+   */
   public String getPageFolder() {
     return pageFolder;
+  }
+
+  public String getRealPath() {
+    return realPath;
   }
 
 }

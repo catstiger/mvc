@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.github.catstiger.mvc.util.ValueMapUtils;
 
-public final class ServletObjectHolder {
+public final class RequestObjectHolder {
   private static final ThreadLocal<HttpServletRequest> requestHolder = new ThreadLocal<HttpServletRequest>();
   private static final ThreadLocal<HttpServletResponse> responseHolder = new ThreadLocal<HttpServletResponse>();
   private static final ThreadLocal<Map<String, Object>> parametersHolder = new ThreadLocal<Map<String, Object>>();
   private static final ThreadLocal<Map<String, Object>> inheritableParamHolder = new ThreadLocal<Map<String, Object>>();
   
-  private ServletObjectHolder() {
+  private RequestObjectHolder() {
     
   }
   
@@ -23,6 +23,7 @@ public final class ServletObjectHolder {
     requestHolder.remove();
     responseHolder.remove();
     parametersHolder.remove();
+    inheritableParamHolder.remove();
   }
   
   static void setRequest(HttpServletRequest request) {

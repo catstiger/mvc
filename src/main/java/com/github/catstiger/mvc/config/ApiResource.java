@@ -110,4 +110,5 @@ public class ApiResource {
   public void setUriSufix(String uriSufix) {
     this.uriSufix = uriSufix;
   }
+
 }

@@ -1,5 +1,103 @@
 package com.github.catstiger.mvc.resolver;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.github.catstiger.mvc.RequestObjectHolder;
+import com.github.catstiger.mvc.util.WebUtils;
+
 public abstract class AbstractResponseResolver implements ResponseResolver {
   
+  /**
+   * 渲染JSON请求。
+   * @param json
+   */
+  protected void renderJson(HttpServletResponse response, String json) {
+    WebUtils.render(response, json, "application/json");
+  }
+  
+  protected void renderJson(String json) {
+    renderJson(RequestObjectHolder.getResponse(), json);
+  }
+
+  /**
+   * 渲染JSON数据，并且当使用GET方法请求JSON数据的时候，默认提供一天（86400秒）的缓存周期。
+   * @param json JSON数据
+   */
+  protected void renderJsonWithCache(HttpServletRequest request, HttpServletResponse response, String json) {
+    if (request == null) {
+      throw new RuntimeException("HttpServletRequest is null.");
+    }
+    if (response == null) {
+      throw new RuntimeException("HttpServletResponse is null.");
+    }
+    if (!"GET".equalsIgnoreCase(request.getMethod())) {
+      WebUtils.setNoCacheHeader(response);
+    } else {
+      WebUtils.setExpiresHeader(response, CACHE_EXPIRES_SEC);
+    }
+    
+    renderJson(response, json);
+  }
+  
+  protected void renderJsonWithCache(String json) {
+    this.renderJsonWithCache(RequestObjectHolder.getRequest(), RequestObjectHolder.getResponse(), json);
+  }
+  
+  /**
+   * 直接输出普通文本.
+   */
+  protected void renderText(HttpServletResponse response, String text) {
+    WebUtils.render(response, text, "text/plain;charset=UTF-8");
+  }
+  
+  protected void renderText(String text) {
+    renderJson(RequestObjectHolder.getResponse(), text);
+  }
+  
+  /**
+   * 渲染Text数据，并且当使用GET方法请求JSON数据的时候，默认提供一天（86400秒）的缓存周期。
+   * @param text Text数据
+   */
+  protected void renderTextWithCache(HttpServletRequest request, HttpServletResponse response, String text) {
+    if (request == null) {
+      throw new RuntimeException("HttpServletRequest is null.");
+    }
+    if (response == null) {
+      throw new RuntimeException("HttpServletResponse is null.");
+    }
+    if (!"GET".equalsIgnoreCase(request.getMethod())) {
+      WebUtils.setNoCacheHeader(response);
+    } else {
+      WebUtils.setExpiresHeader(response, CACHE_EXPIRES_SEC);
+    }
+    
+    renderText(text);
+  }
+  
+  protected void renderTextWithCache(String text) {
+    renderTextWithCache(RequestObjectHolder.getRequest(), RequestObjectHolder.getResponse(), text);
+  }
+  
+  /**
+   * 判断是否是JSON请求
+   */
+  protected boolean isJsonRequest() {
+    HttpServletRequest request = RequestObjectHolder.getRequest();
+    if (request == null) {
+      throw new RuntimeException("HttpServletRequest is null.");
+    }
+    return RequestParser.isJsonRequest(request);
+  }
+  
+  /**
+   * 返回请求的数据类型
+   */
+  protected String getRequiredDataType() {
+    HttpServletRequest request = RequestObjectHolder.getRequest();
+    if (request == null) {
+      throw new RuntimeException("HttpServletRequest is null.");
+    }
+    return RequestParser.getRequiredDataType(request);
+  }
 }
