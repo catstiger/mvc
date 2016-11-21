@@ -30,6 +30,12 @@ public interface ResponseResolver {
    * This marker class is only to be used with annotations, to
    * indicate that <b>no resolver is to be used</b>.
    */
-  public abstract static class None
-  implements ResponseResolver { }
+  public static class None implements ResponseResolver {
+    None() {
+    }
+    @Override
+    public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
+      throw new java.lang.UnsupportedOperationException();
+    } 
+  }
 }

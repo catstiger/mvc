@@ -13,10 +13,14 @@ import com.github.catstiger.mvc.util.ReflectUtils;
 
 public final class ResolverFactory {
   private static Map<String, ResponseResolver> successResolverCache = new ConcurrentHashMap<String, ResponseResolver>(160);
-  private static final ResponseResolver DEFAULT_JSON_505 = new DefaultJson505Resolver();
-  private static final ResponseResolver DEFAULT_JSP_505 = new DefaultJsp505Resolver();
-  private static final ResponseResolver DEFAULT_JSON = new DefaultJsonSuccessResolver();
-  private static final ResponseResolver DEFAULT_JSP = new DefaultJspSuccessResolver();
+  
+  private static final ResponseResolver DEFAULT_JSON_FAILURE_RESOLVER = new DefaultJsonFailureResolver();
+  private static final ResponseResolver DEFAULT_JSP_FAILURE_RESOLVER = new DefaultJspFailureResolver();
+  private static final ResponseResolver DEFAULT_JSON_SUCCESS_RESOLVER = new DefaultJsonSuccessResolver();
+  private static final ResponseResolver DEFAULT_JSP_SUCCESS_RESOLVER = new DefaultJspSuccessResolver();
+  private static final ResponseResolver DEFAULT_TEXT_SUCCESS_RESOLVER = new DefaultTextSuccessResolver();
+  private static final ResponseResolver DEFAULT_TEXT_FAILURE_RESOLVER = new DefaultTextFailureResolver();
+  public static final ResponseResolver NONE_RESOLVER = new ResponseResolver.None();
   
   
   /**
@@ -35,9 +39,8 @@ public final class ResolverFactory {
     //处理自定义Resolver
     String serviceId = RequestParser.getRequestUri(request);
     ApiResource apiResource = ApiResHolder.getInstance().getApiResource(serviceId);
-    
-    
     Method method = apiResource.getMethod();
+    
     if(method != null) {
       API api = method.getAnnotation(API.class);
       if(api != null) {
@@ -50,26 +53,35 @@ public final class ResolverFactory {
     }
     //处理缺省Resolver
     if(RequestParser.isJsonRequest(request)) {
-      return DEFAULT_JSON;
-    } else {
-      return DEFAULT_JSP;
+      return DEFAULT_JSON_SUCCESS_RESOLVER;
+    } 
+    else if(RequestParser.isJspRequest(request)) {
+      return DEFAULT_JSP_SUCCESS_RESOLVER;
+    } 
+    else if (RequestParser.isTextRequest(request)) {
+      return DEFAULT_TEXT_SUCCESS_RESOLVER;
+    } 
+    else {
+      return NONE_RESOLVER;
     }
   }
   
   /**
-   * 创建处理505错误的ResponseResolver实例
+   * 创建处理500错误的ResponseResolver实例
    * @param request HttpServletRequest
    */
   public static ResponseResolver getFailureResolver(HttpServletRequest request) {
-    String uri = RequestParser.getRequestUri(request);
-    if(uri == null) {
-      uri = "";
-    }
-    
     if(RequestParser.isJsonRequest(request)) {
-      return DEFAULT_JSON_505;
-    } else {
-      return DEFAULT_JSP_505;
+      return DEFAULT_JSON_FAILURE_RESOLVER;
+    } 
+    else if(RequestParser.isJspRequest(request)) {
+      return DEFAULT_JSP_FAILURE_RESOLVER;
+    }
+    else if (RequestParser.isTextRequest(request)) {
+      return DEFAULT_TEXT_FAILURE_RESOLVER;
+    } 
+    else {
+      return NONE_RESOLVER;
     }
   }
   

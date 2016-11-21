@@ -15,11 +15,6 @@ import strman.Strman;
 public abstract class RequestParser {
   private static Logger logger = LoggerFactory.getLogger(RequestParser.class);
   
-  public static final String DATA_TYPE_JSON = ".json";
-  public static final String DATA_TYPE_TEXT = ".txt";
-  public static final String DATA_TYPE_HTM = ".htm";
-  public static final String DATA_TYPE_HTML = ".html";
-  
   public static final Set<String> STATIC_URI = new HashSet<String>(20);
   static {
     STATIC_URI.add(".doc");
@@ -34,7 +29,6 @@ public abstract class RequestParser {
     STATIC_URI.add(".js");
     STATIC_URI.add(".css");
     STATIC_URI.add(".html");
-    STATIC_URI.add(".text");
     STATIC_URI.add(".jpeg");
     STATIC_URI.add(".swf");
   }
@@ -99,7 +93,7 @@ public abstract class RequestParser {
   }
   
   /**
-   * 判断是否为JSON请求，URI后缀为.htm或者.html的为非JSON请求，其他都是JSON请求
+   * 判断是否为JSON请求，URI后缀为.json或者.没有后缀的的为JSON请求
    * @return 如果为JSON请求，返回true
    */
   public static boolean isJsonRequest(HttpServletRequest request) {
@@ -109,8 +103,31 @@ public abstract class RequestParser {
       return false;
     }
     
-    return (Strman.endsWith(uri, DATA_TYPE_JSON, false) 
-        || (!Strman.endsWith(uri, DATA_TYPE_TEXT, false) && !Strman.endsWith(uri, DATA_TYPE_HTM, false)));
+    return (Strman.endsWith(uri, ".json") || uri.indexOf(".") < 0);
+  }
+  
+  /**
+   * 根据请求，判断是否需要重定向（forward）到一个JSP，后缀为.do,.action,.htm,.jsp为JSP请求。
+   */
+  public static boolean isJspRequest(HttpServletRequest request) {
+    String uri = request.getRequestURI();
+    if(uri == null) {
+      logger.warn("URI is null !");
+      return false;
+    }
+    return Strman.endsWith(uri, ".do") || Strman.endsWith(uri, ".action") || Strman.endsWith(uri, ".htm") || Strman.endsWith(uri, ".action");
+  }
+  
+  /**
+   * 根据请求，判断是否需要渲染一个TEXT（通常用于AJAX方式获取一个HTML片段），后缀为.txt,.text的为TEXT请求
+   */
+  public static boolean isTextRequest(HttpServletRequest request) {
+    String uri = request.getRequestURI();
+    if(uri == null) {
+      logger.warn("URI is null !");
+      return false;
+    }
+    return Strman.endsWith(uri, ".txt") || Strman.endsWith(uri, ".text");
   }
   
 }

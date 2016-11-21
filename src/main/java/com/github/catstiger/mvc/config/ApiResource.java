@@ -111,4 +111,10 @@ public class ApiResource {
     this.uriSufix = uriSufix;
   }
 
+  @Override
+  public String toString() {
+    return "ApiResource [\nuri=" + uri + ", \nproviderType=" + providerType + ", \nserviceId=" + serviceId + ", \nmethodName=" + methodName + ", \nserviceInstance="
+        + serviceInstance + ", \nsingleton=" + singleton + "]";
+  }
+
 }

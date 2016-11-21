@@ -28,49 +28,51 @@ import com.github.catstiger.mvc.resolver.ServiceInvoker;
 public class MvcFilter implements Filter {
   private static Logger logger = LoggerFactory.getLogger(MvcFilter.class);
 
-  @SuppressWarnings("unchecked")
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest req = (HttpServletRequest) request;
     HttpServletResponse resp = (HttpServletResponse) response;
     
-    RequestObjectHolder.setRequest(req);
-    RequestObjectHolder.setResponse(resp);
-    RequestObjectHolder.setRequestParameters(req.getParameterMap());
-    logger.debug(req.getRequestURI());
-    
-    String serviceUri = RequestParser.getRequestUri(req);
-    ApiResource apiRes = ApiResHolder.getInstance().getApiResource(serviceUri);
-   
-    if(apiRes != null) {
-      doService(req, resp, apiRes);
-    }
-    else if (RequestParser.isStatic(req.getRequestURI())) {
-      chain.doFilter(request, response);
-    } 
-    else { //找不到对应的Service，404错误
-      resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
+    doFilterInternal(req, resp, chain);
   }
   
-  private void doService(HttpServletRequest req, HttpServletResponse resp, ApiResource apiRes) {
-    try {
-      Map<String, Object> cascadedMap = RequestObjectHolder.getInheritableParams();
-      Object value = ServiceInvoker.invoke(apiRes, cascadedMap);
-      ResponseResolver resolver = ResolverFactory.getSuccessResolver(req);
-      if(resolver != null) {
-        resolver.resolve(req, resp, apiRes, value);
+  @SuppressWarnings("unchecked")
+  private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    //保存本次请求的参数
+    RequestObjectHolder.setRequest(request);
+    RequestObjectHolder.setResponse(response);
+    RequestObjectHolder.setRequestParameters(request.getParameterMap());
+    
+    //本次请求对应的ApiResource对象
+    String serviceUri = RequestParser.getRequestUri(request);
+    ApiResource apiRes = ApiResHolder.getInstance().getApiResource(serviceUri);
+
+    if(apiRes != null) {
+      ResponseResolver resolver;
+      Object value;
+      try { //调用服务并获取ResponseResolver对象
+        Map<String, Object> cascadedMap = RequestObjectHolder.getInheritableParams();
+        value = ServiceInvoker.invoke(apiRes, cascadedMap); 
+        resolver = ResolverFactory.getSuccessResolver(request);
+      } catch (Exception e) { //错误处理
+        logger.error(e.getMessage());
+        e.printStackTrace();
+        resolver = ResolverFactory.getFailureResolver(request);
+        value = e;
       }
-    } catch (Exception e) {
-      logger.error(e.getMessage());
-      e.printStackTrace();
-      ResponseResolver resolver = ResolverFactory.getFailureResolver(req);
-      if(resolver != null) {
-        resolver.resolve(req, resp, apiRes, e);
+      //执行ResponseResolver
+      if(resolver != null && resolver.getClass() != ResponseResolver.None.class) {
+        resolver.resolve(request, response, apiRes, value);
+      } else {
+        chain.doFilter(request, response);
       }
+      
+    } else {
+      chain.doFilter(request, response);
     }
+    
   }
+  
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {

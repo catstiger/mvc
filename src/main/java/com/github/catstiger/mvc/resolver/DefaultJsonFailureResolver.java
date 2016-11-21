@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.config.ApiResource;
 
-public class DefaultJson505Resolver extends AbstractResponseResolver {
+public class DefaultJsonFailureResolver extends AbstractResponseResolver {
 
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
