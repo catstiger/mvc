@@ -24,6 +24,8 @@ import com.github.catstiger.mvc.resolver.RequestParser;
 import com.github.catstiger.mvc.resolver.ResolverFactory;
 import com.github.catstiger.mvc.resolver.ResponseResolver;
 import com.github.catstiger.mvc.resolver.ServiceInvoker;
+import com.github.catstiger.mvc.util.RequestUtils;
+import com.github.catstiger.mvc.util.ValueMapUtils;
 
 public class MvcFilter implements Filter {
   private static Logger logger = LoggerFactory.getLogger(MvcFilter.class);
@@ -33,42 +35,56 @@ public class MvcFilter implements Filter {
     HttpServletRequest req = (HttpServletRequest) request;
     HttpServletResponse resp = (HttpServletResponse) response;
     
+    boolean isGet = "GET".equals(req.getMethod());
+    if(isGet) {
+      Initializer init = Initializer.getInstance();
+      if(init.getCacheSeconds() == 0L) {
+        RequestUtils.setNoCacheHeader(resp);
+      } else {
+        RequestUtils.setExpiresHeader(resp, init.getCacheSeconds());  
+      }
+    }
+    
     doFilterInternal(req, resp, chain);
   }
   
   @SuppressWarnings("unchecked")
   private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
     //保存本次请求的参数
+    RequestObjectHolder.clear();
     RequestObjectHolder.setRequest(request);
     RequestObjectHolder.setResponse(response);
-    RequestObjectHolder.setRequestParameters(request.getParameterMap());
     
-    //本次请求对应的ApiResource对象
-    String serviceUri = RequestParser.getRequestUri(request);
-    ApiResource apiRes = ApiResHolder.getInstance().getApiResource(serviceUri);
-
-    if(apiRes != null) {
-      ResponseResolver resolver;
-      Object value;
-      try { //调用服务并获取ResponseResolver对象
-        Map<String, Object> cascadedMap = RequestObjectHolder.getInheritableParams();
-        value = ServiceInvoker.invoke(apiRes, cascadedMap); 
-        resolver = ResolverFactory.getSuccessResolver(request);
-      } catch (Exception e) { //错误处理
-        logger.error(e.getMessage());
-        e.printStackTrace();
-        resolver = ResolverFactory.getFailureResolver(request);
-        value = e;
-      }
-      //执行ResponseResolver
-      if(resolver != null && resolver.getClass() != ResponseResolver.None.class) {
-        resolver.resolve(request, response, apiRes, value);
+    try {
+      //本次请求对应的ApiResource对象
+      String serviceUri = RequestParser.getRequestUri(request);
+      ApiResource apiRes = ApiResHolder.getInstance().getApiResource(serviceUri);
+  
+      if(apiRes != null) {
+        ResponseResolver resolver = null;
+        Object value;
+        try { //调用服务并获取ResponseResolver对象
+          Map<String, Object> cascadedMap = ValueMapUtils.inheritableParams(request.getParameterMap());
+          value = ServiceInvoker.invoke(apiRes, cascadedMap); 
+          resolver = ResolverFactory.getSuccessResolver(request);
+        } catch (Exception e) { //错误处理
+          logger.error(e.getMessage());
+          e.printStackTrace();
+          resolver = ResolverFactory.getFailureResolver(request);
+          value = e;
+        }
+        //执行ResponseResolver
+        if(resolver != null && resolver.getClass() != ResponseResolver.None.class) {
+          resolver.resolve(request, response, apiRes, value);
+        } else {
+          chain.doFilter(request, response);
+        }
+        
       } else {
         chain.doFilter(request, response);
       }
-      
-    } else {
-      chain.doFilter(request, response);
+    } finally {
+      RequestObjectHolder.clear();
     }
     
   }

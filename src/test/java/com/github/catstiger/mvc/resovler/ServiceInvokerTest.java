@@ -48,9 +48,8 @@ public class ServiceInvokerTest extends AbstractTestCase {
     map.put("score", new String[] {"90.98"});
     map.put("isActive", new String[] {"true"});
     
-    Map<String, Object> params = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(map, params);
-   
+    Map<String, Object> params = ValueMapUtils.inheritableParams(map);
+    
     ApiResource apiRes = new ApiResource();
     
     apiRes.setServiceId(TestService.class.getName());
@@ -81,8 +80,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     map.put("score", new String[] {"900.98D"});
     map.put("isActive", new String[] {"null"});
     
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(map, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(map);
     
     ApiResource apiRes = new ApiResource();
     
@@ -109,8 +107,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
       throw new RuntimeException("404, /test_service/test_single_bean");
     }
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    testParam = ValueMapUtils.inheritableParams(testData);
     json = (String) ServiceInvoker.invoke(api, testParam);
     System.out.println(json);
   }
@@ -125,8 +122,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     System.out.println("****" + JSON.toJSONString(testParam, true));
     
@@ -151,8 +147,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
         test.put(key, testData.get(key));
       }
     }
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(test, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(test);
     ServiceInvoker.invoke(api, testParam);
     
     api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_bean");
@@ -167,8 +162,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
         test.put(key, testData.get(key));
       }
     }
-    testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(test, testParam);
+    testParam = ValueMapUtils.inheritableParams(test);
     ServiceInvoker.invoke(api, testParam);
     
     ServiceInvoker.invoke(api, null);
@@ -187,8 +181,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
     System.out.println(JSON.toJSONString(testData));
     
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     System.out.println(JSON.toJSONString(testParam));
     
     String json = (String) ServiceInvoker.invoke(api, testParam);
@@ -205,8 +198,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     System.out.println(JSON.toJSONString(testParam, true));
     
     String json = (String) ServiceInvoker.invoke(api, testParam);
@@ -224,8 +216,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     System.out.println(JSON.toJSONString(testParam, true));
     
     String json = (String) ServiceInvoker.invoke(api, testParam);
@@ -243,8 +234,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     System.out.println(JSON.toJSONString(testParam, true));
     
     String json = (String) ServiceInvoker.invoke(api, testParam);
@@ -261,8 +251,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     long b = new Date().getTime();
     for(int i = 0; i < 100 * 10000; i++) {
@@ -293,8 +282,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
       throw new RuntimeException("404, /spring_test_service/test_http_and_other");
     }
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     ServiceInvoker.invoke(api, testParam);
   }
   
@@ -305,8 +293,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
       throw new RuntimeException("404, /test_service/test_list");
     }
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     System.out.println(JSON.toJSONString(testParam, true));
     ServiceInvoker.invoke(api, testParam);
@@ -316,8 +303,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
       throw new RuntimeException("404, /test_service/test_set");
     }
     testData = this.prepareTestData(api.getMethod(), true);
-    testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    testParam = ValueMapUtils.inheritableParams(testData);
     
     System.out.println(JSON.toJSONString(testParam, true));
     ServiceInvoker.invoke(api, testParam);
@@ -327,8 +313,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
       throw new RuntimeException("404, /test_service/test_list_no_param");
     }
     testData = this.prepareTestData(api.getMethod(), true);
-    testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    testParam = ValueMapUtils.inheritableParams(testData);
     
     System.out.println(JSON.toJSONString(testParam, true));
     ServiceInvoker.invoke(api, testParam);
@@ -343,8 +328,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     System.out.println("****" + JSON.toJSONString(testParam, true));
     
@@ -361,8 +345,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     long b = new Date().getTime();
     for(int i = 0; i < 100 * 10000; i++) {
@@ -380,8 +363,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     long b = new Date().getTime();
     for(int i = 0; i < 100 * 10000; i++) {
@@ -401,8 +383,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     long b = new Date().getTime();
     for(int i = 0; i < 100 * 10000; i++) {
@@ -417,8 +398,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
       Map<String, Object> map = new HashMap<String, Object>();
       
       long b = new Date().getTime();
-      Map<String, Object> testParam = new HashMap<String, Object>();
-      ValueMapUtils.inheritableParams(map, testParam);
+      Map<String, Object> testParam = ValueMapUtils.inheritableParams(map);
       ApiResource api = ApiResHolder.getInstance().getApiResource("/test_service/test_single_bean");
       for(int i = 0; i < 100 * 10000; i++) {
         ServiceInvoker.invoke(api, testParam);
@@ -436,8 +416,7 @@ public class ServiceInvokerTest extends AbstractTestCase {
     }
     
     Map<String, Object> testData = this.prepareTestData(api.getMethod(), true);
-    Map<String, Object> testParam = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(testData, testParam);
+    Map<String, Object> testParam = ValueMapUtils.inheritableParams(testData);
     
     String json = (String) ServiceInvoker.invoke(api, testParam);
     System.out.println(json);

@@ -46,8 +46,8 @@ public abstract class ServiceInvoker {
     if (cascadedParams == null) {
       cascadedParams = Collections.emptyMap();
     }
-    // 当只有一个参数，且参数为POJO，允许参数属性直接作为KEY
-    if (params.length == 1 && ConverterFactory.isPojo(params[0].getType()) && !cascadedParams.containsKey(params[0].getName())) {
+    // 当只有一个参数，且参数为POJO，并且允许参数属性直接作为KEY
+    if (params.length == 1 && ConverterFactory.isPojo(params[0].getType()) && !cascadedParams.containsKey(ReflectUtils.getParameterName(params[0], 0))) {
       ValueConverter<?> converter = ConverterFactory.getConverter(params[0]);
       args[0] = converter.convert(cascadedParams);
     } else { // 多个参数，或者单个primitive\collection

@@ -1,5 +1,6 @@
 package com.github.catstiger.mvc.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,8 +10,6 @@ public final class ValueMapUtils {
   private ValueMapUtils() {
     
   }
-  
-  
   /**
    * 将一个Request参数Map，根据其Key的特征，转换为一个带有层级结构的Map对象，具体：
    * <p>
@@ -40,8 +39,19 @@ public final class ValueMapUtils {
    * @param inputFlatMap
    * @param outputCascadeMap
    */
+  public static Map<String, Object> inheritableParams(Map<String, Object> flatParams) {
+    if(flatParams == null || flatParams.isEmpty()) {
+      return Collections.emptyMap();
+    }
+    
+    Map<String, Object> params = new HashMap<String, Object>(flatParams.size());
+    inheritableParams(flatParams, params);
+    
+    return params;
+  }
+  
   @SuppressWarnings("unchecked")
-  public static void inheritableParams(Map<String, Object> inputFlatMap, Map<String, Object> outputCascadeMap) {
+  private static void inheritableParams(Map<String, Object> inputFlatMap, Map<String, Object> outputCascadeMap) {
     if(outputCascadeMap == null) {
       return;
     }
@@ -53,24 +63,26 @@ public final class ValueMapUtils {
     for(Iterator<String> itr = keys.iterator(); itr.hasNext();) {
       String key = itr.next();
       int dotIndex = key.indexOf(".");
-      if(dotIndex > 0) {
+      if(dotIndex > 0) { //带有.的Key
         String prefix = key.substring(0, dotIndex);
         Map<String, Object> subParams = null;
         Object item = outputCascadeMap.get(prefix);
+        //如果层级MAP中已经有以prefix为Key的Map，则取出
         if(item != null && ClassUtils.isAssignable(item.getClass(), Map.class, false)) {
           subParams = (Map<String, Object>) item;
-        } else {
+        } else { //否则，新建一个空的MAP，并且以prefix为Key保存在层级MAP中
           subParams = new HashMap<String, Object>(10);
           outputCascadeMap.put(prefix, subParams);
         }
+        //向子Map中加入一条数据
         subParams.put(key.substring(dotIndex + 1), inputFlatMap.get(key));
-      } else {
+      } else { //普通的KEY
         Object vo = inputFlatMap.get(key);
         if(vo == null) {
           outputCascadeMap.put(key, null);
-        } else if (!vo.getClass().isArray()) {
+        } else if (!vo.getClass().isArray()) { //如果不是Array则直接存入层级map
           outputCascadeMap.put(key, vo);
-        } else {
+        } else {//如果是Array，长度超过1的，以数组存储，否则以数组的第一个元素存储
           String[] value = (String[]) vo;
           if(value.length == 0) {
             outputCascadeMap.put(key, null);
@@ -88,6 +100,7 @@ public final class ValueMapUtils {
     for(Iterator<String> itr = keys.iterator(); itr.hasNext();) {
       String key = itr.next();
       Object val = outputCascadeMap.get(key);
+      //如果有子Map，则将子Map转换为层级Map
       if(ClassUtils.isAssignable(val.getClass(), Map.class, false)) {
         Map<String, Object> map = new HashMap<String, Object>();
         inheritableParams((Map<String, Object>) val, map);

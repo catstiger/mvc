@@ -69,6 +69,12 @@ public final class Initializer {
   public static final String DEFAULT_URI_PREFIX = "";
   
   /**
+   * HTTP缓存设置
+   */
+  public static final String INIT_PARAM_CACHE_SEC = "cacheSeconds";
+  public static final String DEFAULT_CACHE_SEC = "0";
+  
+  /**
    * 存放JSP文件的目录，缺省为{@value #DEFAULT_PAGE_FOLDER}
    */
   public static final String INIT_PARAM_PAGE_FOLDER = "pageFolder";
@@ -80,6 +86,7 @@ public final class Initializer {
   private String minuteFormat = DEFAULT_MINUTE_FORMAT;
   private String uriPrefix = DEFAULT_URI_PREFIX;
   private String pageFolder = DEFAULT_PAGE_FOLDER;
+  private String cacheSeconds = DEFAULT_CACHE_SEC;
   private String realPath;
   
   private static Initializer instance = null;
@@ -155,6 +162,11 @@ public final class Initializer {
     pageFolder = config.getInitParameter(INIT_PARAM_PAGE_FOLDER);
     if(StringUtils.isBlank(pageFolder)) {
       pageFolder = DEFAULT_PAGE_FOLDER;
+    }
+    
+    cacheSeconds = config.getInitParameter(INIT_PARAM_CACHE_SEC);
+    if(StringUtils.isBlank(cacheSeconds)) {
+      cacheSeconds = DEFAULT_CACHE_SEC;
     }
   }
   
@@ -434,6 +446,16 @@ public final class Initializer {
 
   public String getRealPath() {
     return realPath;
+  }
+
+  /**
+   * HTTP缓存时间，如果为0L，则表示不缓存
+   */
+  public long getCacheSeconds() {
+    if(cacheSeconds == null || !StringUtils.isNumber(cacheSeconds)) {
+      return Long.valueOf(DEFAULT_CACHE_SEC).longValue();
+    }
+    return Long.valueOf(cacheSeconds).longValue();
   }
 
 }

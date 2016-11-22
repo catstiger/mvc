@@ -3,16 +3,20 @@ package com.github.catstiger.mvc.resolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.config.ApiResource;
 
-public class DefaultJsonFailureResolver extends AbstractResponseResolver {
+public class DefaultTextFailureResolver extends AbstractResponseResolver {
 
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
-    JsonModel jsonModel = new JsonModel(JsonModel.ERROR_UNKNOWN, (String) value);
-    String json = JSON.toJSONString(jsonModel);
-    renderJson(response, json);
+    if(value != null) {
+      if(value instanceof Throwable) {
+        renderText(response, ((Throwable) value).getMessage());
+      } else {
+        renderText(response, (String) value);
+      }
+    } 
+
   }
 
 }

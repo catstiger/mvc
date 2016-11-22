@@ -31,8 +31,7 @@ public class BeanValueConverterTest extends TestCase {
     map.put("dept.corp.id", "985873");
     map.put("dept.corp.size", new String[]{"998", "12", "33", "44"});
     
-    Map<String, Object> cascaded = new HashMap<String, Object>();
-    ValueMapUtils.inheritableParams(map, cascaded);
+    Map<String, Object> cascaded = ValueMapUtils.inheritableParams(map);
     
     System.out.println(JSON.toJSONString(cascaded, true));
     

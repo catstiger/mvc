@@ -1,7 +1,5 @@
 package com.github.catstiger.mvc;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,7 +15,4 @@ public class ServletObjectHolderMock {
     RequestObjectHolder.setResponse(response);
   }
   
-  public static void setRequestParameters(Map<String, Object> params) {
-    RequestObjectHolder.setRequestParameters(params);
-  }
 }

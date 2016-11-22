@@ -3,16 +3,19 @@ package com.github.catstiger.mvc.resolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.config.ApiResource;
 
-public class DefaultJsonFailureResolver extends AbstractResponseResolver {
+/**
+ * 用于向Response直接渲染一段文本，通常用于通过AJAX获取HTML片段
+ *
+ */
+public class DefaultTextSuccessResolver extends AbstractResponseResolver {
 
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
-    JsonModel jsonModel = new JsonModel(JsonModel.ERROR_UNKNOWN, (String) value);
-    String json = JSON.toJSONString(jsonModel);
-    renderJson(response, json);
+    if(value != null) {
+      renderText(response, (String) value);
+    } 
   }
 
 }

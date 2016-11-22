@@ -46,8 +46,15 @@ public final class WebUtils {
       response.setContentType(contentType);
       response.setCharacterEncoding("UTF-8");
       response.getWriter().write(text);
+      response.getWriter().flush();
     } catch (IOException e) {
       e.printStackTrace();
+    } finally {
+      try {
+        response.getWriter().close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
   

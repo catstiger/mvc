@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.alibaba.fastjson.JSON;
-
 import junit.framework.TestCase;
 
 public class ServletObjectHolderTest extends TestCase {
@@ -25,10 +23,10 @@ public class ServletObjectHolderTest extends TestCase {
     params.put("leader.sex", new String[] {"1"});
     
     
-    RequestObjectHolder.setRequestParameters(params);
-    Map<String, Object> map = RequestObjectHolder.getInheritableParams();
+    //RequestObjectHolder.setRequestParameters(params);
+    //Map<String, Object> map = RequestObjectHolder.getInheritableParams();
     
-    String json = JSON.toJSONString(map, true);
-    System.out.println(json);
+    //String json = JSON.toJSONString(map, true);
+    //System.out.println(json);
   }
 }

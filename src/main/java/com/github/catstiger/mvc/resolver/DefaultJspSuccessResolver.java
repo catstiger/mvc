@@ -42,7 +42,7 @@ public class DefaultJspSuccessResolver extends AbstractResponseResolver {
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
     String serviceUri = apiResource.getUri();
-    String jsp = Initializer.getInstance().getPageFolder() + serviceUri + ".jsp";
+    String jsp = new StringBuilder(60).append(Initializer.getInstance().getPageFolder()).append(serviceUri).append(".jsp").toString();
     
     if(value != null) {
       if(value instanceof Collection || value.getClass().isArray()) {
@@ -72,7 +72,6 @@ public class DefaultJspSuccessResolver extends AbstractResponseResolver {
       }
     }
     
-    response.setCharacterEncoding("UTF-8");
     try {
       request.getRequestDispatcher(jsp).forward(request, response);
     } catch (Exception e) {
