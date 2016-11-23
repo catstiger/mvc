@@ -7,6 +7,8 @@ import com.github.catstiger.mvc.service.RequestParser;
 import com.github.catstiger.mvc.util.WebUtils;
 
 public abstract class AbstractResponseResolver implements ResponseResolver {
+  protected static final String ATTR_NAME_COLLECTION = "list";
+  protected static final String ATTR_NAME_PRIMITIVE = "data";
   
   /**
    * 渲染JSON请求。

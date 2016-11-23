@@ -35,15 +35,13 @@ import com.github.catstiger.mvc.util.ReflectUtils;
  *
  */
 public class JspSuccessResolver extends AbstractResponseResolver {
-  public static final String ATTR_NAME_COLLECTION = "list";
-  public static final String ATTR_NAME_PRIMITIVE = "data";
-
+  
   @SuppressWarnings("rawtypes")
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
     String serviceUri = apiResource.getUri();
     String jsp = new StringBuilder(60).append(Initializer.getInstance().getPageFolder()).append(serviceUri)
-        .append(Initializer.DEFAULT_TEMPLATE_SUFFIX_FTL).toString();
+        .append(Initializer.DEFAULT_TEMPLATE_SUFFIX_JSP).toString();
     
     if(value != null) {
       if(value instanceof Collection || value.getClass().isArray()) {

@@ -109,19 +109,19 @@ public abstract class RequestParser {
   /**
    * 根据请求，判断是否需要重定向（forward）到一个JSP，后缀为.do,.action,.htm,.jsp为JSP请求。
    */
-  public static boolean isJspRequest(HttpServletRequest request) {
+  public static boolean isHypertextRequest(HttpServletRequest request) {
     String uri = request.getRequestURI();
     if(uri == null) {
       logger.warn("URI is null !");
       return false;
     }
-    return Strman.endsWith(uri, ".do") || Strman.endsWith(uri, ".action") || Strman.endsWith(uri, ".htm") || Strman.endsWith(uri, ".action");
+    return Strman.endsWith(uri, ".do") || Strman.endsWith(uri, ".action") || Strman.endsWith(uri, ".htm") || Strman.endsWith(uri, ".html");
   }
   
   /**
    * 根据请求，判断是否需要渲染一个TEXT（通常用于AJAX方式获取一个HTML片段），后缀为.txt,.text的为TEXT请求
    */
-  public static boolean isTextRequest(HttpServletRequest request) {
+  public static boolean isPlaintextRequest(HttpServletRequest request) {
     String uri = request.getRequestURI();
     if(uri == null) {
       logger.warn("URI is null !");

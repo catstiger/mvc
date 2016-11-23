@@ -15,10 +15,15 @@ import com.github.catstiger.mvc.util.ReflectUtils;
 public final class ResolverFactory {
   private static Map<String, ResponseResolver> successResolverCache = new ConcurrentHashMap<String, ResponseResolver>(160);
   
-  private static final ResponseResolver DEFAULT_JSON_FAILURE_RESOLVER = new JsonFailureResolver();
-  private static final ResponseResolver DEFAULT_JSP_FAILURE_RESOLVER = new JspFailureResolver();
+ 
+  
   private static final ResponseResolver DEFAULT_JSON_SUCCESS_RESOLVER = new JsonSuccessResolver();
+  private static final ResponseResolver DEFAULT_JSON_FAILURE_RESOLVER = new JsonFailureResolver();
+  
   private static final ResponseResolver DEFAULT_JSP_SUCCESS_RESOLVER = new JspSuccessResolver();
+  private static final ResponseResolver DEFAULT_JSP_FAILURE_RESOLVER = new JspFailureResolver();
+  
+  
   private static final ResponseResolver DEFAULT_TEXT_SUCCESS_RESOLVER = new TextSuccessResolver();
   private static final ResponseResolver DEFAULT_TEXT_FAILURE_RESOLVER = new TextFailureResolver();
   public static final ResponseResolver NONE_RESOLVER = new ResponseResolver.None();
@@ -56,10 +61,16 @@ public final class ResolverFactory {
     if(RequestParser.isJsonRequest(request)) {
       return DEFAULT_JSON_SUCCESS_RESOLVER;
     } 
-    else if(RequestParser.isJspRequest(request)) {
-      return DEFAULT_JSP_SUCCESS_RESOLVER;
+    else if(RequestParser.isHypertextRequest(request)) {
+      FreeMarkerResolver freemarkerResolver = FreeMarkerResolver.getInstance();
+      //首先判断是否采用Freemarker
+      if(freemarkerResolver.isSupported(apiResource)) {
+        return freemarkerResolver;
+      } else {
+        return DEFAULT_JSP_SUCCESS_RESOLVER;
+      }
     } 
-    else if (RequestParser.isTextRequest(request)) {
+    else if (RequestParser.isPlaintextRequest(request)) {
       return DEFAULT_TEXT_SUCCESS_RESOLVER;
     } 
     else {
@@ -75,10 +86,10 @@ public final class ResolverFactory {
     if(RequestParser.isJsonRequest(request)) {
       return DEFAULT_JSON_FAILURE_RESOLVER;
     } 
-    else if(RequestParser.isJspRequest(request)) {
+    else if(RequestParser.isHypertextRequest(request)) {
       return DEFAULT_JSP_FAILURE_RESOLVER;
     }
-    else if (RequestParser.isTextRequest(request)) {
+    else if (RequestParser.isPlaintextRequest(request)) {
       return DEFAULT_TEXT_FAILURE_RESOLVER;
     } 
     else {

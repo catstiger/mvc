@@ -15,9 +15,10 @@ public class JsonSuccessResolver extends AbstractResponseResolver {
 
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
-    JsonModel jsonModel = new JsonModel(value);
-    String json = JSON.toJSONString(jsonModel);
-    renderJson(response, json);
+    if(value != null) {
+      String json = JSON.toJSONString(value);
+      renderJson(response, json);
+    }
   }
 
 }
