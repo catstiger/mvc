@@ -34,7 +34,7 @@ import com.github.catstiger.mvc.util.ReflectUtils;
  * @author catstiger
  *
  */
-public class DefaultJspSuccessResolver extends AbstractResponseResolver {
+public class JspSuccessResolver extends AbstractResponseResolver {
   public static final String ATTR_NAME_COLLECTION = "list";
   public static final String ATTR_NAME_PRIMITIVE = "data";
 
@@ -42,7 +42,8 @@ public class DefaultJspSuccessResolver extends AbstractResponseResolver {
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
     String serviceUri = apiResource.getUri();
-    String jsp = new StringBuilder(60).append(Initializer.getInstance().getPageFolder()).append(serviceUri).append(".jsp").toString();
+    String jsp = new StringBuilder(60).append(Initializer.getInstance().getPageFolder()).append(serviceUri)
+        .append(Initializer.DEFAULT_TEMPLATE_SUFFIX_FTL).toString();
     
     if(value != null) {
       if(value instanceof Collection || value.getClass().isArray()) {

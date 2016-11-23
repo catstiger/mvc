@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.github.catstiger.mvc.config.ApiResource;
 
-public class DefaultJspFailureResolver extends AbstractResponseResolver {
+public class JspFailureResolver extends AbstractResponseResolver {
   
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {

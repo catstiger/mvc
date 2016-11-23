@@ -69,6 +69,13 @@ public final class Initializer {
   public static final String DEFAULT_URI_PREFIX = "";
   
   /**
+   * URI前缀，例如web.xml中url-pattern为/a/*，那么uriPrefix为"/a"
+   */
+  public static final String INIT_PARAM_TEMPLATE_SUFFIX = "templateSuffix";
+  public static final String DEFAULT_TEMPLATE_SUFFIX_JSP = ".jsp";
+  public static final String DEFAULT_TEMPLATE_SUFFIX_FTL = ".ftl";
+  
+  /**
    * HTTP缓存设置
    */
   public static final String INIT_PARAM_CACHE_SEC = "cacheSeconds";

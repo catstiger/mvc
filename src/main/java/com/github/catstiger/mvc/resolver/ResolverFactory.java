@@ -14,12 +14,12 @@ import com.github.catstiger.mvc.util.ReflectUtils;
 public final class ResolverFactory {
   private static Map<String, ResponseResolver> successResolverCache = new ConcurrentHashMap<String, ResponseResolver>(160);
   
-  private static final ResponseResolver DEFAULT_JSON_FAILURE_RESOLVER = new DefaultJsonFailureResolver();
-  private static final ResponseResolver DEFAULT_JSP_FAILURE_RESOLVER = new DefaultJspFailureResolver();
-  private static final ResponseResolver DEFAULT_JSON_SUCCESS_RESOLVER = new DefaultJsonSuccessResolver();
-  private static final ResponseResolver DEFAULT_JSP_SUCCESS_RESOLVER = new DefaultJspSuccessResolver();
-  private static final ResponseResolver DEFAULT_TEXT_SUCCESS_RESOLVER = new DefaultTextSuccessResolver();
-  private static final ResponseResolver DEFAULT_TEXT_FAILURE_RESOLVER = new DefaultTextFailureResolver();
+  private static final ResponseResolver DEFAULT_JSON_FAILURE_RESOLVER = new JsonFailureResolver();
+  private static final ResponseResolver DEFAULT_JSP_FAILURE_RESOLVER = new JspFailureResolver();
+  private static final ResponseResolver DEFAULT_JSON_SUCCESS_RESOLVER = new JsonSuccessResolver();
+  private static final ResponseResolver DEFAULT_JSP_SUCCESS_RESOLVER = new JspSuccessResolver();
+  private static final ResponseResolver DEFAULT_TEXT_SUCCESS_RESOLVER = new TextSuccessResolver();
+  private static final ResponseResolver DEFAULT_TEXT_FAILURE_RESOLVER = new TextFailureResolver();
   public static final ResponseResolver NONE_RESOLVER = new ResponseResolver.None();
   
   
