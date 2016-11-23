@@ -1,4 +1,4 @@
-package com.github.catstiger.mvc.resolver;
+package com.github.catstiger.mvc.service;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -8,8 +8,6 @@ import java.util.Map;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.converter.ConverterFactory;
 import com.github.catstiger.mvc.converter.ValueConverter;
-import com.github.catstiger.mvc.service.ServiceProvider;
-import com.github.catstiger.mvc.service.ServiceProviderFactory;
 import com.github.catstiger.mvc.util.CollectionUtils;
 import com.github.catstiger.mvc.util.ReflectUtils;
 

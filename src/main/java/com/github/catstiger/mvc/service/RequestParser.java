@@ -1,4 +1,4 @@
-package com.github.catstiger.mvc.resolver;
+package com.github.catstiger.mvc.service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -77,7 +77,7 @@ public abstract class RequestParser {
    * @param request
    * @return
    */
-  protected static String getRequiredDataType(HttpServletRequest request) {
+  public static String getRequiredDataType(HttpServletRequest request) {
     String uri = request.getRequestURI();
     if(uri == null) {
       logger.warn("URI is null !");

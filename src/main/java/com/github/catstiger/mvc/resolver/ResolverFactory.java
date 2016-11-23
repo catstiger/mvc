@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.catstiger.mvc.annotation.API;
 import com.github.catstiger.mvc.config.ApiResHolder;
 import com.github.catstiger.mvc.config.ApiResource;
+import com.github.catstiger.mvc.service.RequestParser;
 import com.github.catstiger.mvc.util.ReflectUtils;
 
 public final class ResolverFactory {

@@ -20,10 +20,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.github.catstiger.mvc.config.ApiResHolder;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.config.Initializer;
-import com.github.catstiger.mvc.resolver.RequestParser;
 import com.github.catstiger.mvc.resolver.ResolverFactory;
 import com.github.catstiger.mvc.resolver.ResponseResolver;
-import com.github.catstiger.mvc.resolver.ServiceInvoker;
+import com.github.catstiger.mvc.service.RequestParser;
+import com.github.catstiger.mvc.service.ServiceInvoker;
 import com.github.catstiger.mvc.util.RequestUtils;
 import com.github.catstiger.mvc.util.ValueMapUtils;
 

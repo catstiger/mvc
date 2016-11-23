@@ -3,6 +3,7 @@ package com.github.catstiger.mvc.resolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.catstiger.mvc.service.RequestParser;
 import com.github.catstiger.mvc.util.WebUtils;
 
 public abstract class AbstractResponseResolver implements ResponseResolver {
