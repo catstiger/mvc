@@ -173,6 +173,8 @@
   <scm>
   	<developerConnection>catstiger</developerConnection>
   	<url>https://github.com/catstiger/mvc</url>
+  	<tag>java,mvc</tag>
+  	<connection>git@github.com:catstiger/mvc.git</connection>
   </scm>
   <issueManagement>
   	<url>https://github.com/catstiger/mvc/issues</url>
