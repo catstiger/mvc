@@ -3,6 +3,7 @@ package com.github.catstiger.mvc.resolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.service.RequestParser;
 import com.github.catstiger.mvc.util.WebUtils;
 
@@ -32,7 +33,7 @@ public abstract class AbstractResponseResolver implements ResponseResolver {
     if (!"GET".equalsIgnoreCase(request.getMethod())) {
       WebUtils.setNoCacheHeader(response);
     } else {
-      WebUtils.setExpiresHeader(response, CACHE_EXPIRES_SEC);
+      WebUtils.setExpiresHeader(response, Initializer.getInstance().getCacheSeconds());
     }
     
     renderJson(response, json);
@@ -59,7 +60,7 @@ public abstract class AbstractResponseResolver implements ResponseResolver {
     if (!"GET".equalsIgnoreCase(request.getMethod())) {
       WebUtils.setNoCacheHeader(response);
     } else {
-      WebUtils.setExpiresHeader(response, CACHE_EXPIRES_SEC);
+      WebUtils.setExpiresHeader(response, Initializer.getInstance().getCacheSeconds());
     }
     
     renderText(response, text);

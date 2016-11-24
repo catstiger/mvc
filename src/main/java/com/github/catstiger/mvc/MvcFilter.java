@@ -36,6 +36,7 @@ public class MvcFilter implements Filter {
     HttpServletResponse resp = (HttpServletResponse) response;
     
     boolean isGet = "GET".equals(req.getMethod());
+    //在GET方式下，尝试提供HTTP缓存支持
     if(isGet) {
       Initializer init = Initializer.getInstance();
       if(init.getCacheSeconds() == 0L) {
@@ -94,8 +95,8 @@ public class MvcFilter implements Filter {
   public void init(FilterConfig filterConfig) throws ServletException {
     ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(filterConfig.getServletContext());
     SpringHelper.initApplicationContext(applicationContext);
-    
     Initializer initializer = Initializer.getInstance();
+
     String basePackage = filterConfig.getInitParameter(Initializer.INIT_PARAM_BASE_PACKAGE);
     //加载各种初始化参数
     initializer.initParams(filterConfig);

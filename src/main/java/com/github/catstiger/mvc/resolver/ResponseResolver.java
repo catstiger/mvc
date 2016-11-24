@@ -7,11 +7,6 @@ import com.github.catstiger.mvc.config.ApiResource;
 
 public interface ResponseResolver {
   /**
-   * HTTP缓存时间
-   */
-  public static final long CACHE_EXPIRES_SEC = 86400L;
-  
-  /**
    * URI调用完成之后，调用这个方法，处理后续的工作
    * <ul>
    *     <li>如果调用没有找到ApiResource, 处理404错误</li>
