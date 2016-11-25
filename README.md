@@ -24,21 +24,21 @@ Getting Started
 1.在您的POM中加入一个repository:
 ```XML
        <repository>
-		<id>Honqun Nexus</id>
-		<name>Honqun Repository</name>
-		<url>http://115.28.55.60:8081/nexus/content/groups/public/</url>
-		<snapshots>
-		    <enabled>false</enabled>
-		</snapshots>
-	</repository>
+        <id>Honqun Nexus 3dp</id>
+        <name>Honqun Repository</name>
+        <url>http://115.28.55.60:8081/nexus/content/repositories/thirdparty/</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
 ```		
 2.POM中加入依赖 
 ```XML       
-       <dependency>
-		<groupId>catstiger.github.com</groupId>
-		<artifactId>catstiger-mvc</artifactId>
-		<version>0.1</version>
-	</dependency>
+    <dependency>
+		  <groupId>com.github.catstiger</groupId>
+		  <artifactId>catstiger-mvc</artifactId>
+		  <version>0.1</version>
+		</dependency>
 ```
 3.配置web.xml,加入MvcFilter:
 ```XML
