@@ -9,8 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.catstiger.mvc.config.Initializer;
-
-import strman.Strman;
+import com.github.catstiger.mvc.util.StringUtils;
 
 public abstract class RequestParser {
   private static Logger logger = LoggerFactory.getLogger(RequestParser.class);
@@ -46,15 +45,15 @@ public abstract class RequestParser {
     
     Initializer cfg = Initializer.getInstance();
     
-    uri = Strman.removeLeft(uri, request.getContextPath());
-    uri = Strman.removeLeft(uri, cfg.getUriPrefix());
+    uri = StringUtils.removeLeft(uri, request.getContextPath());
+    uri = StringUtils.removeLeft(uri, cfg.getUriPrefix());
     int dotIndex = uri.indexOf(".");
     if(dotIndex > 0) {
       uri = uri.substring(0, dotIndex);
     }
     
     if(uri.endsWith("/")) {
-      uri = Strman.removeRight(uri, "/");
+      uri = StringUtils.removeRight(uri, "/");
     }
     
     return uri;
@@ -103,7 +102,7 @@ public abstract class RequestParser {
       return false;
     }
     
-    return (Strman.endsWith(uri, ".json") || uri.indexOf(".") < 0);
+    return (StringUtils.endsWith(uri, ".json") || uri.indexOf(".") < 0);
   }
   
   /**
@@ -115,7 +114,7 @@ public abstract class RequestParser {
       logger.warn("URI is null !");
       return false;
     }
-    return Strman.endsWith(uri, ".do") || Strman.endsWith(uri, ".action") || Strman.endsWith(uri, ".htm") || Strman.endsWith(uri, ".html");
+    return StringUtils.endsWith(uri, ".do") || StringUtils.endsWith(uri, ".action") || StringUtils.endsWith(uri, ".htm") || StringUtils.endsWith(uri, ".html");
   }
   
   /**
@@ -127,7 +126,7 @@ public abstract class RequestParser {
       logger.warn("URI is null !");
       return false;
     }
-    return Strman.endsWith(uri, ".txt") || Strman.endsWith(uri, ".text");
+    return StringUtils.endsWith(uri, ".txt") || StringUtils.endsWith(uri, ".text");
   }
   
 }

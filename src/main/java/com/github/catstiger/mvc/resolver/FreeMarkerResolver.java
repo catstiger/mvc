@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.converter.ConverterFactory;
+import com.github.catstiger.mvc.util.StringUtils;
 import com.github.catstiger.mvc.util.WebUtils;
 
 import freemarker.cache.FileTemplateLoader;
@@ -23,7 +24,6 @@ import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import strman.Strman;
 
 public final class FreeMarkerResolver extends AbstractResponseResolver {
   private Configuration cfg;
@@ -69,7 +69,7 @@ public final class FreeMarkerResolver extends AbstractResponseResolver {
     
     String tplName = apiResource.getUriSufix();
     if(tplName != null && tplName.startsWith("/")) {
-      tplName = Strman.removeLeft(tplName, "/");
+      tplName = StringUtils.removeLeft(tplName, "/");
     }
     tplName = tplName + ".ftl";
     
@@ -91,7 +91,7 @@ public final class FreeMarkerResolver extends AbstractResponseResolver {
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object model) {
     String tplName = apiResource.getUriSufix();
     if(tplName != null && tplName.startsWith("/")) {
-      tplName = Strman.removeLeft(tplName, "/");
+      tplName = StringUtils.removeLeft(tplName, "/");
     }
     tplName = tplName + ".ftl";
     

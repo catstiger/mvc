@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.catstiger.mvc.util.StringUtils;
 
-import strman.Strman;
-
 public final class ApiResHolder {
   private static Logger logger = LoggerFactory.getLogger(ApiResHolder.class);
   
@@ -39,7 +37,7 @@ public final class ApiResHolder {
       return null;
     }
     if(serviceId.endsWith("/")) {
-      serviceId = Strman.removeRight(serviceId, "/");
+      serviceId = StringUtils.removeRight(serviceId, "/");
     }
     
     if(apiMapping.containsKey(serviceId)) { //直接根据URI返回对应的ApiResource对象

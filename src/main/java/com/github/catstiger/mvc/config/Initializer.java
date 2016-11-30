@@ -28,8 +28,6 @@ import com.github.catstiger.mvc.annotation.API;
 import com.github.catstiger.mvc.annotation.Domain;
 import com.github.catstiger.mvc.service.ServiceProvider;
 import com.github.catstiger.mvc.util.StringUtils;
-
-import strman.Strman;
 @Component
 public final class Initializer {
   private static Logger logger = LoggerFactory.getLogger(Initializer.class);
@@ -198,14 +196,14 @@ public final class Initializer {
     
     if(StringUtils.isBlank(uriPrefix)) { //如果没有定义，则根据serviceId或者类名确定URL
       if(isSpringBean(clazz)) {
-        uriPrefix = "/" + Strman.toSnakeCase(serviceId.replaceAll("\\\\|/", " "));
+        uriPrefix = "/" + StringUtils.toSnakeCase(serviceId.replaceAll("\\\\|/", " "));
       } else {
-        uriPrefix = "/" + Strman.toSnakeCase(clazz.getSimpleName());
+        uriPrefix = "/" + StringUtils.toSnakeCase(clazz.getSimpleName());
       }
     }
     //去除结尾的/
     if(uriPrefix.endsWith("/")) {
-      uriPrefix = Strman.removeRight(uriPrefix, "/");
+      uriPrefix = StringUtils.removeRight(uriPrefix, "/");
     }
     
     Method[] methods = clazz.getMethods();
@@ -219,13 +217,13 @@ public final class Initializer {
       
       String uriSuffix = apiAnnotation.value(); //如果Aai定义了URI后缀，那么使用Api定义的
       if(StringUtils.isBlank(uriSuffix)) {
-        uriSuffix = "/" + Strman.toSnakeCase(method.getName());
+        uriSuffix = "/" + StringUtils.toSnakeCase(method.getName());
       }
       if(!uriSuffix.startsWith("/")) {
         uriSuffix = "/" + uriSuffix;
       }
       if(uriSuffix.endsWith("/")) {
-        uriSuffix = Strman.removeRight(uriSuffix, "/");
+        uriSuffix = StringUtils.removeRight(uriSuffix, "/");
       }
       
       ApiResource apiRes = new ApiResource();
@@ -258,19 +256,19 @@ public final class Initializer {
       Component comAnn = clazz.getAnnotation(Component.class);
       serviceId = comAnn.value();
       if(StringUtils.isBlank(serviceId)) {
-        serviceId = Strman.toCamelCase(clazz.getSimpleName());
+        serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     } else if (clazz.isAnnotationPresent(Service.class)) {
       Service svrAnn = clazz.getAnnotation(Service.class);
       serviceId = svrAnn.value();
       if(StringUtils.isBlank(serviceId)) {
-        serviceId = Strman.toCamelCase(clazz.getSimpleName());
+        serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     } else if (clazz.isAnnotationPresent(Repository.class)) {
       Repository respAnn = clazz.getAnnotation(Repository.class);
       serviceId = respAnn.value();
       if(StringUtils.isBlank(serviceId)) {
-        serviceId = Strman.toCamelCase(clazz.getSimpleName());
+        serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     }
     

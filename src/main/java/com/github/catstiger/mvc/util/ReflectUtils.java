@@ -21,8 +21,6 @@ import org.springframework.beans.BeansException;
 
 import com.github.catstiger.mvc.annotation.Param;
 
-import strman.Strman;
-
 public final class ReflectUtils {
   /**
    * Naming prefix for CGLIB-renamed methods.
@@ -383,7 +381,7 @@ public final class ReflectUtils {
       return param.value();
     }
     // 对于进没有Present也没有@Param的参数，返回参数类名（驼峰命名）+参数位置索引
-    return Strman.toCamelCase(parameter.getType().getSimpleName()) + paramIndex;
+    return StringUtils.toCamelCase(parameter.getType().getSimpleName()) + paramIndex;
   }
   
   private static LinkedList<Field> fields(Class<?> clazz) {
