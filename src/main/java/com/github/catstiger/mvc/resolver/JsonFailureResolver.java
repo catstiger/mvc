@@ -10,7 +10,13 @@ public class JsonFailureResolver extends AbstractResponseResolver {
 
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
-    JsonModel jsonModel = new JsonModel(JsonModel.ERROR_UNKNOWN, (String) value);
+    String msg;
+    if(value != null && value instanceof Throwable) {
+      msg = ((Throwable) value).getMessage();
+    } else {
+      msg = (String) value;
+    }
+    JsonModel jsonModel = new JsonModel(JsonModel.ERROR_UNKNOWN, msg);
     String json = JSON.toJSONString(jsonModel);
     renderJson(response, json);
   }
