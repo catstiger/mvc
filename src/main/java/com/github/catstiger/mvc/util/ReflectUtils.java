@@ -301,7 +301,13 @@ public final class ReflectUtils {
       throw new IllegalStateException("Could not access method: " + ex.getMessage());
     }
     if (ex instanceof InvocationTargetException) {
-      new InvocationTargetException((InvocationTargetException) ex);
+      Throwable targetEx = ((InvocationTargetException) ex).getTargetException();
+      String msg = null;
+      if(targetEx != null) {
+        msg = targetEx.getMessage();
+        new RuntimeException(msg, targetEx); 
+      }
+      new RuntimeException(ex.getMessage(), ex);
     }
     if (ex instanceof RuntimeException) {
       throw (RuntimeException) ex;
