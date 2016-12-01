@@ -1,9 +1,12 @@
 package com.github.catstiger.mvc.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 import org.junit.Test;
+
+import com.github.catstiger.mvc.model.Student;
 
 public class ReflectUtilsTest {
   @Test
@@ -16,6 +19,14 @@ public class ReflectUtilsTest {
         if(clazz != null)
         System.out.println(clazz.getName());
       }
+    }
+  }
+  
+  @Test
+  public void testAct() {
+    Field[] fs = ReflectUtils.getFields(Student.class);
+    for(int i = 0; i < fs.length; i++) {
+      System.out.println(fs[i].getName());
     }
   }
 }

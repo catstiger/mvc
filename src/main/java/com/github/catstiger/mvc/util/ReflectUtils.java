@@ -158,6 +158,7 @@ public final class ReflectUtils {
     if(clazz == null) {
       throw new RuntimeException("Class must not be null");
     }
+    
     if(fieldsCache.containsKey(clazz)) {
       return fieldsCache.get(clazz);
     }
@@ -396,8 +397,10 @@ public final class ReflectUtils {
       }
     }
     Class<?> searchType = clazz.getSuperclass();
-    while (Object.class != searchType && searchType != null) {
+  
+    while (searchType != null && Object.class != searchType) {
       fields.addAll(fields(searchType));
+      searchType = searchType.getSuperclass();
     }
     
     return fields;
