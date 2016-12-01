@@ -12,8 +12,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -28,24 +26,11 @@ import com.github.catstiger.mvc.util.RequestUtils;
 import com.github.catstiger.mvc.util.ValueMapUtils;
 
 public class MvcFilter implements Filter {
-  private static Logger logger = LoggerFactory.getLogger(MvcFilter.class);
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest req = (HttpServletRequest) request;
     HttpServletResponse resp = (HttpServletResponse) response;
-    
-    boolean isGet = "GET".equals(req.getMethod());
-    //在GET方式下，尝试提供HTTP缓存支持
-    if(isGet) {
-      Initializer init = Initializer.getInstance();
-      if(init.getCacheSeconds() == 0L) {
-        RequestUtils.setNoCacheHeader(resp);
-      } else {
-        RequestUtils.setExpiresHeader(resp, init.getCacheSeconds());  
-      }
-    }
-    
     doFilterInternal(req, resp, chain);
   }
   
@@ -62,6 +47,17 @@ public class MvcFilter implements Filter {
       ApiResource apiRes = ApiResHolder.getInstance().getApiResource(serviceUri);
   
       if(apiRes != null) {
+        boolean isGet = "GET".equals(request.getMethod());
+        //在GET方式下，尝试提供HTTP缓存支持
+        if(isGet) {
+          Initializer init = Initializer.getInstance();
+          if(init.getCacheSeconds() == 0L) {
+            RequestUtils.setNoCacheHeader(response);
+          } else {
+            RequestUtils.setExpiresHeader(response, init.getCacheSeconds());  
+          }
+        }
+        
         ResponseResolver resolver = null;
         Object value;
         try { //调用服务并获取ResponseResolver对象
@@ -69,8 +65,6 @@ public class MvcFilter implements Filter {
           value = ServiceInvoker.invoke(apiRes, cascadedMap); 
           resolver = ResolverFactory.getSuccessResolver(request);
         } catch (Exception e) { //错误处理
-          logger.error(e.getMessage());
-          e.printStackTrace();
           resolver = ResolverFactory.getFailureResolver(request);
           value = e;
         }
