@@ -13,7 +13,7 @@ public class BigDecimalValueConverter extends PrimitiveConverter<BigDecimal> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
-    if(isNull(trimmed)) {
+    if(isNull(trimmed) || "".equals(trimmed)) {
       return null;
     }
     return new BigDecimal(trimmed);

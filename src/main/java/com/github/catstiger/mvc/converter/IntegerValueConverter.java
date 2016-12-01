@@ -11,6 +11,9 @@ public class IntegerValueConverter extends PrimitiveConverter<Integer> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
+    if(isNull(trimmed) || "".equals(trimmed)) {
+      return null;
+    }
     return (isHexNumber(trimmed) ? Integer.decode(trimmed) : Integer.valueOf(trimmed));
   }
 

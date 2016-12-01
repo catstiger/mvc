@@ -11,7 +11,7 @@ public class DoubleValueConverter extends PrimitiveConverter<Double> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
-    if(isNull(trimmed)) {
+    if(isNull(trimmed) || "".equals(trimmed)) {
       return null;
     }
     return new Double(trimmed);

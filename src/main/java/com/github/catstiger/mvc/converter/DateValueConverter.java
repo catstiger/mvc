@@ -20,6 +20,10 @@ public class DateValueConverter implements ValueConverter<Date> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
+    if("".equals(trimmed)) {
+      return null;  
+    }
+    
     if(StringUtils.isNumber(trimmed)) {
       return new Date(Long.valueOf(trimmed));
     } else {

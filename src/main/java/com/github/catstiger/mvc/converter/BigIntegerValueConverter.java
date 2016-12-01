@@ -13,7 +13,7 @@ public class BigIntegerValueConverter extends PrimitiveConverter<BigInteger> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
-    if(isNull(trimmed)) {
+    if(isNull(trimmed) || "".equals(trimmed)) {
       return null;
     }
     return (isHexNumber(trimmed) ? decodeBigInteger(trimmed) : new BigInteger(trimmed));

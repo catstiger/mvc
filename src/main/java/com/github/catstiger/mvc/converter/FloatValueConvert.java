@@ -11,7 +11,7 @@ public class FloatValueConvert extends PrimitiveConverter<Float> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
-    if(isNull(trimmed)) {
+    if(isNull(trimmed) || "".equals(trimmed)) {
       return null;
     }
     return new Float(trimmed);

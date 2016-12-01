@@ -11,7 +11,7 @@ public class BooleanValueConverter extends PrimitiveConverter<Boolean> {
     }
     
     String trimmed = StringUtils.trimToEmpty(value.toString());
-    if(isNull(trimmed)) {
+    if(isNull(trimmed) || "".equals(trimmed)) {
       return null;
     }
     return new Boolean(trimmed);
