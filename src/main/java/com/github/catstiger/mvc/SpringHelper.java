@@ -21,7 +21,7 @@ public final class SpringHelper {
   }
   
   public synchronized static void initApplicationContext(ApplicationContext ctx) {
-    if(applicationContext == null) {
+    if(ctx == null) {
       logger.info("There is no application context detected.");
     }
     applicationContext = ctx;
