@@ -307,7 +307,7 @@ public final class ReflectUtils {
     if (ex instanceof RuntimeException) {
       throw (RuntimeException) ex;
     }
-    throw new UndeclaredThrowableException(ex);
+    throw new RuntimeException(ex.getMessage(), ex);
   }
   
   /**
