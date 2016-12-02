@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.catstiger.mvc.util.ClassUtils;
+import com.github.catstiger.mvc.util.GenericsUtils;
 import com.github.catstiger.mvc.util.ReflectUtils;
 
 public class BeanValueConverter implements ValueConverter<Object> {
@@ -50,6 +51,16 @@ public class BeanValueConverter implements ValueConverter<Object> {
       //对应该属性的转换器
       ValueConverter<?> converter = null;
       Method write = propDesc.getWriteMethod();
+      //Bridge Method的情况下，无法获取field类型，需要通过泛型参数获取，目前只支持一个泛型参数的情况
+      Class<?> realType;
+      if(write.isBridge() && (write.getDeclaringClass().getGenericSuperclass() != null || write.getDeclaringClass().getGenericInterfaces().length > 0)) {
+        realType = GenericsUtils.getGenericClass(write.getDeclaringClass(), 0);
+        if(realType == null) {
+          realType = propDesc.getPropertyType();
+        }
+      } else {
+        realType = propDesc.getPropertyType();
+      }
       
       if(ClassUtils.isAssignable(propDesc.getPropertyType(), Collection.class)) {
         //如果参数为Collection的实现类，获得其泛型参数类型
@@ -58,9 +69,9 @@ public class BeanValueConverter implements ValueConverter<Object> {
         if(elementType == null) {
           elementType = String.class;
         }
-        converter = ConverterFactory.getConverter(propDesc.getPropertyType(), elementType);
+        converter = ConverterFactory.getConverter(realType, elementType);
       } else {
-        converter = ConverterFactory.getConverter(propDesc.getPropertyType());
+        converter = ConverterFactory.getConverter(realType);
       }
       
       if(converter == null) {

@@ -1,6 +1,6 @@
 package com.github.catstiger.mvc.model;
 
-public class BaseModel {
+public class BaseModel implements Model<Long>{
   protected Long id;
 
   public Long getId() {
