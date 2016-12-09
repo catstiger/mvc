@@ -10,6 +10,26 @@ public final class StringUtils {
   private StringUtils() {
 
   }
+  
+  /**
+   * <code>Null</code> safe equals method.
+   */
+  public static boolean equals(String a, String b) {
+    if (a == null) {
+      return b == null;
+    }
+    return a.equals(b);
+  }
+
+  /**
+   * <code>Null</code> safe equals method.
+   */
+  public static boolean equalsIgnoreCase(String a, String b) {
+    if (a == null) {
+      return b == null;
+    }
+    return a.equalsIgnoreCase(b);
+  }
 
   /**
    * <p>
@@ -29,8 +49,7 @@ public final class StringUtils {
    * CharSequence. That functionality is available in isBlank().
    * </p>
    *
-   * @param cs
-   *          the CharSequence to check, may be null
+   * @param cs the CharSequence to check, may be null
    * @return {@code true} if the CharSequence is empty or null
    * @since 3.0 Changed signature from isEmpty(String) to isEmpty(CharSequence)
    */
@@ -51,8 +70,7 @@ public final class StringUtils {
    * StringUtils.isNotEmpty("  bob  ") = true
    * </pre>
    *
-   * @param cs
-   *          the CharSequence to check, may be null
+   * @param cs the CharSequence to check, may be null
    * @return {@code true} if the CharSequence is not empty and not null
    * @since 3.0 Changed signature from isNotEmpty(String) to
    *        isNotEmpty(CharSequence)
@@ -76,8 +94,7 @@ public final class StringUtils {
    * <code>Null</code> and empty String will return <code>false</code>.
    * </p>
    *
-   * @param str
-   *          the <code>String</code> to check
+   * @param str the <code>String</code> to check
    * @return <code>true</code> if the string is a correctly formatted number
    */
   public static boolean isNumber(String str) {
@@ -189,8 +206,7 @@ public final class StringUtils {
    * StringUtils.isBlank("  bob  ") = false
    * </pre>
    *
-   * @param cs
-   *          the CharSequence to check, may be null
+   * @param cs the CharSequence to check, may be null
    * @return {@code true} if the CharSequence is null, empty or whitespace
    * @since 2.0
    * @since 3.0 Changed signature from isBlank(String) to isBlank(CharSequence)
@@ -222,8 +238,7 @@ public final class StringUtils {
    * StringUtils.isNotBlank("  bob  ") = true
    * </pre>
    *
-   * @param cs
-   *          the CharSequence to check, may be null
+   * @param cs the CharSequence to check, may be null
    * @return {@code true} if the CharSequence is not empty and not null and not
    *         whitespace
    * @since 2.0
@@ -258,8 +273,7 @@ public final class StringUtils {
    * StringUtils.trim("    abc    ") = "abc"
    * </pre>
    *
-   * @param str
-   *          the String to be trimmed, may be null
+   * @param str the String to be trimmed, may be null
    * @return the trimmed string, {@code null} if null String input
    */
   public static String trim(String str) {
@@ -286,8 +300,7 @@ public final class StringUtils {
    * StringUtils.trimToNull("    abc    ") = "abc"
    * </pre>
    *
-   * @param str
-   *          the String to be trimmed, may be null
+   * @param str the String to be trimmed, may be null
    * @return the trimmed String, {@code null} if only chars &lt;= 32, empty or
    *         null String input
    * @since 2.0
@@ -317,8 +330,7 @@ public final class StringUtils {
    * StringUtils.trimToEmpty("    abc    ") = "abc"
    * </pre>
    *
-   * @param str
-   *          the String to be trimmed, may be null
+   * @param str the String to be trimmed, may be null
    * @return the trimmed String, or an empty String if {@code null} input
    * @since 2.0
    */
@@ -335,8 +347,7 @@ public final class StringUtils {
    * Characters will be chosen from the set of all characters.
    * </p>
    *
-   * @param count
-   *          the length of random string to create
+   * @param count the length of random string to create
    * @return the random string
    */
   public static String random(int count) {
@@ -353,8 +364,7 @@ public final class StringUtils {
    * between {@code 32} and {@code 126} (inclusive).
    * </p>
    *
-   * @param count
-   *          the length of random string to create
+   * @param count the length of random string to create
    * @return the random string
    */
   public static String randomAscii(int count) {
@@ -370,8 +380,7 @@ public final class StringUtils {
    * Characters will be chosen from the set of alpha-numeric characters.
    * </p>
    *
-   * @param count
-   *          the length of random string to create
+   * @param count the length of random string to create
    * @return the random string
    */
   public static String randomAlphanumeric(int count) {
@@ -387,8 +396,7 @@ public final class StringUtils {
    * Characters will be chosen from the set of numeric characters.
    * </p>
    *
-   * @param count
-   *          the length of random string to create
+   * @param count the length of random string to create
    * @return the random string
    */
   public static String randomNumeric(int count) {
@@ -405,13 +413,11 @@ public final class StringUtils {
    * indicated by the arguments.
    * </p>
    *
-   * @param count
-   *          the length of random string to create
-   * @param letters
-   *          if {@code true}, generated string will include alphabetic
+   * @param count the length of random string to create
+   * @param letters if {@code true}, generated string will include alphabetic
    *          characters
-   * @param numbers
-   *          if {@code true}, generated string will include numeric characters
+   * @param numbers if {@code true}, generated string will include numeric
+   *          characters
    * @return the random string
    */
   private static String random(int count, boolean letters, boolean numbers) {
@@ -483,10 +489,8 @@ public final class StringUtils {
    * Returns a new String with the prefix removed, if present. This is case
    * sensitive.
    *
-   * @param value
-   *          The input String
-   * @param prefix
-   *          String to remove on left
+   * @param value The input String
+   * @param prefix String to remove on left
    * @return The String without prefix
    */
   public static String removeLeft(final String value, final String prefix) {
@@ -496,12 +500,9 @@ public final class StringUtils {
   /**
    * Returns a new String with the prefix removed, if present.
    *
-   * @param value
-   *          The input String
-   * @param prefix
-   *          String to remove on left
-   * @param caseSensitive
-   *          ensure case sensitivity
+   * @param value The input String
+   * @param prefix String to remove on left
+   * @param caseSensitive ensure case sensitivity
    * @return The String without prefix
    */
   public static String removeLeft(final String value, final String prefix, final boolean caseSensitive) {
@@ -519,10 +520,8 @@ public final class StringUtils {
    * Returns a new string with the 'suffix' removed, if present. Search is case
    * sensitive.
    *
-   * @param value
-   *          The input String
-   * @param suffix
-   *          The suffix to remove
+   * @param value The input String
+   * @param suffix The suffix to remove
    * @return The String without suffix!
    */
   public static String removeRight(final String value, final String suffix) {
@@ -532,12 +531,9 @@ public final class StringUtils {
   /**
    * Returns a new string with the 'suffix' removed, if present.
    *
-   * @param value
-   *          The input String
-   * @param suffix
-   *          The suffix to remove
-   * @param caseSensitive
-   *          whether search should be case sensitive or not
+   * @param value The input String
+   * @param suffix The suffix to remove
+   * @param caseSensitive whether search should be case sensitive or not
    * @return The String without suffix!
    */
   public static String removeRight(final String value, final String suffix, final boolean caseSensitive) {
@@ -551,10 +547,8 @@ public final class StringUtils {
   /**
    * Test if value ends with search. The search is case sensitive.
    *
-   * @param value
-   *          input string
-   * @param search
-   *          string to search
+   * @param value input string
+   * @param search string to search
    * @return true or false
    */
   public static boolean endsWith(final String value, final String search) {
@@ -567,12 +561,9 @@ public final class StringUtils {
   /**
    * Test if value ends with search.
    *
-   * @param value
-   *          input string
-   * @param search
-   *          string to search
-   * @param caseSensitive
-   *          true or false
+   * @param value input string
+   * @param search string to search
+   * @param caseSensitive true or false
    * @return true or false
    */
   public static boolean endsWith(final String value, final String search, final boolean caseSensitive) {
@@ -585,14 +576,10 @@ public final class StringUtils {
   /**
    * Test if value ends with search.
    *
-   * @param value
-   *          input string
-   * @param search
-   *          string to search
-   * @param position
-   *          position till which you want to search.
-   * @param caseSensitive
-   *          true or false
+   * @param value input string
+   * @param search string to search
+   * @param position position till which you want to search.
+   * @param caseSensitive true or false
    * @return true or false
    */
   public static boolean endsWith(final String value, final String search, final int position, final boolean caseSensitive) {
@@ -609,8 +596,7 @@ public final class StringUtils {
   /**
    * Replace consecutive whitespace characters with a single space.
    *
-   * @param value
-   *          input String
+   * @param value input String
    * @return collapsed String
    */
   public static String collapseWhitespace(final String value) {
@@ -623,8 +609,7 @@ public final class StringUtils {
   /**
    * Transform to camelCase
    *
-   * @param value
-   *          The input String
+   * @param value The input String
    * @return String in camelCase.
    */
   public static String toCamelCase(final String value) {
@@ -638,8 +623,7 @@ public final class StringUtils {
   /**
    * Converts the first character of string to upper case.
    *
-   * @param input
-   *          The string to convert.
+   * @param input The string to convert.
    * @return Returns the converted string.
    */
   public static String upperFirst(final String value) {
@@ -656,8 +640,7 @@ public final class StringUtils {
   /**
    * Converts the first character of string to lower case.
    *
-   * @param input
-   *          The string to convert.
+   * @param input The string to convert.
    * @return Returns the converted string.
    */
   public static String lowerFirst(final String value) {
@@ -709,7 +692,7 @@ public final class StringUtils {
       for (int i = 0; i < words.length; i++) {
         if (words[i] != null) {
           buf.append(words[i].toLowerCase());
-          if(i < words.length - 1) {
+          if (i < words.length - 1) {
             buf.append(chr);
           }
         }
@@ -717,7 +700,7 @@ public final class StringUtils {
     }
     return buf.toString();
   }
-  
+
   /**
    * Transform to snake_case.
    *
@@ -725,8 +708,7 @@ public final class StringUtils {
    * @return String in snake_case.
    */
   public static String toSnakeCase(final String value) {
-      return toDecamelize(value, "_");
+    return toDecamelize(value, "_");
   }
- 
 
 }
