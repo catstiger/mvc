@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.catstiger.mvc.util.StringUtils;
+import com.github.catstiger.utils.StringUtils;
 
 public final class ApiResHolder {
   private static Logger logger = LoggerFactory.getLogger(ApiResHolder.class);

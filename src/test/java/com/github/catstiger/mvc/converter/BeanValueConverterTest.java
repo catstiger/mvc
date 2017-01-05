@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.model.Student;
-import com.github.catstiger.mvc.util.ValueMapUtils;
+import com.github.catstiger.utils.ValueMapUtils;
 
 import junit.framework.TestCase;
 

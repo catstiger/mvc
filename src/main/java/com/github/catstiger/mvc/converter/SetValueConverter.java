@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.github.catstiger.mvc.util.CollectionUtils;
+import com.github.catstiger.utils.CollectionUtils;
 
 public class SetValueConverter implements ValueConverter<Set<?>>{
   private ArrayValueConverter arrayValueConverter;

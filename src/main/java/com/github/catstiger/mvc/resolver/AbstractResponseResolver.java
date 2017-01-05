@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.service.RequestParser;
-import com.github.catstiger.mvc.util.WebUtils;
+import com.github.catstiger.utils.WebUtils;
 
 public abstract class AbstractResponseResolver implements ResponseResolver {
   protected static final String ATTR_NAME_COLLECTION = "list";

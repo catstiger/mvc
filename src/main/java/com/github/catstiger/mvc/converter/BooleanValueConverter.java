@@ -1,6 +1,6 @@
 package com.github.catstiger.mvc.converter;
 
-import com.github.catstiger.mvc.util.StringUtils;
+import com.github.catstiger.utils.StringUtils;
 
 public class BooleanValueConverter extends PrimitiveConverter<Boolean> {
 

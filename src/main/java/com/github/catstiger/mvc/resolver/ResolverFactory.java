@@ -10,7 +10,7 @@ import com.github.catstiger.mvc.annotation.API;
 import com.github.catstiger.mvc.config.ApiResHolder;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.service.RequestParser;
-import com.github.catstiger.mvc.util.ReflectUtils;
+import com.github.catstiger.utils.ReflectUtils;
 
 public final class ResolverFactory {
   private static Map<String, ResponseResolver> successResolverCache = new ConcurrentHashMap<String, ResponseResolver>(160);

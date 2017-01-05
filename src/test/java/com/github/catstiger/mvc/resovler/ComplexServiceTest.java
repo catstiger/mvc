@@ -19,7 +19,7 @@ import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.model.Student;
 import com.github.catstiger.mvc.service.ServiceInvoker;
-import com.github.catstiger.mvc.util.ValueMapUtils;
+import com.github.catstiger.utils.ValueMapUtils;
 
 public class ComplexServiceTest extends AbstractTestCase {
   

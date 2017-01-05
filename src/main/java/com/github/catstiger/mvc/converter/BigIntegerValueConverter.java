@@ -2,7 +2,7 @@ package com.github.catstiger.mvc.converter;
 
 import java.math.BigInteger;
 
-import com.github.catstiger.mvc.util.StringUtils;
+import com.github.catstiger.utils.StringUtils;
 
 public class BigIntegerValueConverter extends PrimitiveConverter<BigInteger> {
 

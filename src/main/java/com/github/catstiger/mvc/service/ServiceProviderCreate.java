@@ -1,7 +1,7 @@
 package com.github.catstiger.mvc.service;
 
 import com.github.catstiger.mvc.config.ApiResource;
-import com.github.catstiger.mvc.util.ReflectUtils;
+import com.github.catstiger.utils.ReflectUtils;
 
 public class ServiceProviderCreate implements ServiceProvider {
 

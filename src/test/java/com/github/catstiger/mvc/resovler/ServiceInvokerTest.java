@@ -23,7 +23,7 @@ import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.service.ServiceInvoker;
 import com.github.catstiger.mvc.service.ServiceProvider;
-import com.github.catstiger.mvc.util.ValueMapUtils;
+import com.github.catstiger.utils.ValueMapUtils;
 
 public class ServiceInvokerTest extends AbstractTestCase {
   @BeforeClass

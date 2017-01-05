@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 import com.github.catstiger.mvc.annotation.API;
 import com.github.catstiger.mvc.annotation.Domain;
 import com.github.catstiger.mvc.service.ServiceProvider;
-import com.github.catstiger.mvc.util.StringUtils;
+import com.github.catstiger.utils.StringUtils;
 @Component
 public final class Initializer {
   private static Logger logger = LoggerFactory.getLogger(Initializer.class);

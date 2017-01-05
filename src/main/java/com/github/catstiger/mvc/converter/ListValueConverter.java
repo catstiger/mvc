@@ -2,7 +2,7 @@ package com.github.catstiger.mvc.converter;
 
 import java.util.List;
 
-import com.github.catstiger.mvc.util.CollectionUtils;
+import com.github.catstiger.utils.CollectionUtils;
 
 public class ListValueConverter implements ValueConverter<List<?>>{
   private ArrayValueConverter arrayValueConverter;

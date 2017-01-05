@@ -18,8 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.catstiger.mvc.annotation.Param;
-import com.github.catstiger.mvc.util.ClassUtils;
-import com.github.catstiger.mvc.util.ReflectUtils;
+import com.github.catstiger.utils.ClassUtils;
+import com.github.catstiger.utils.ReflectUtils;
 
 public abstract class ConverterFactory {
   private static Logger logger = LoggerFactory.getLogger(ConverterFactory.class);

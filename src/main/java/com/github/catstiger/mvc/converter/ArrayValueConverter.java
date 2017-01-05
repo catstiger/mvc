@@ -2,7 +2,7 @@ package com.github.catstiger.mvc.converter;
 
 import java.lang.reflect.Array;
 
-import com.github.catstiger.mvc.util.ClassUtils;
+import com.github.catstiger.utils.ClassUtils;
 
 
 /**

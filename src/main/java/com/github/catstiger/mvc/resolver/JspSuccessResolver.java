@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.converter.ConverterFactory;
-import com.github.catstiger.mvc.util.ReflectUtils;
+import com.github.catstiger.utils.ReflectUtils;
 
 /**
  * 如果<br>

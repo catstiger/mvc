@@ -9,7 +9,7 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 
 import com.github.catstiger.mvc.config.Initializer;
-import com.github.catstiger.mvc.util.StringUtils;
+import com.github.catstiger.utils.StringUtils;
 
 public class DateValueConverter implements ValueConverter<Date> {
 

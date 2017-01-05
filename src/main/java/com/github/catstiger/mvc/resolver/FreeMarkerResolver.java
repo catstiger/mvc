@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.catstiger.mvc.config.ApiResource;
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.converter.ConverterFactory;
-import com.github.catstiger.mvc.util.StringUtils;
-import com.github.catstiger.mvc.util.WebUtils;
+import com.github.catstiger.utils.StringUtils;
+import com.github.catstiger.utils.WebUtils;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;

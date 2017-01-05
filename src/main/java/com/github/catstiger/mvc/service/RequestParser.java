@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.catstiger.mvc.config.Initializer;
-import com.github.catstiger.mvc.util.StringUtils;
+import com.github.catstiger.utils.StringUtils;
 
 public abstract class RequestParser {
   private static Logger logger = LoggerFactory.getLogger(RequestParser.class);

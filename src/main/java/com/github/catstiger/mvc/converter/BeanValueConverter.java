@@ -9,9 +9,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.catstiger.mvc.util.ClassUtils;
-import com.github.catstiger.mvc.util.GenericsUtils;
-import com.github.catstiger.mvc.util.ReflectUtils;
+import com.github.catstiger.utils.ClassUtils;
+import com.github.catstiger.utils.GenericsUtils;
+import com.github.catstiger.utils.ReflectUtils;
 
 public class BeanValueConverter implements ValueConverter<Object> {
   private Logger logger = LoggerFactory.getLogger(getClass());

@@ -22,8 +22,8 @@ import com.github.catstiger.mvc.resolver.ResolverFactory;
 import com.github.catstiger.mvc.resolver.ResponseResolver;
 import com.github.catstiger.mvc.service.RequestParser;
 import com.github.catstiger.mvc.service.ServiceInvoker;
-import com.github.catstiger.mvc.util.RequestUtils;
-import com.github.catstiger.mvc.util.ValueMapUtils;
+import com.github.catstiger.utils.RequestUtils;
+import com.github.catstiger.utils.ValueMapUtils;
 
 public class MvcFilter implements Filter {
 
