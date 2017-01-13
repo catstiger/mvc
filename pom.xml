@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.catstiger</groupId>
   <artifactId>catstiger-mvc</artifactId>
-  <version>0.1.9</version>
+  <version>0.1.13</version>
   <build>
     <plugins>
       <plugin>
@@ -19,7 +19,7 @@
     <dependency>
         <groupId>com.github.catstiger</groupId>
         <artifactId>catstiger-utils</artifactId>
-        <version>0.1.9</version>
+        <version>0.1.13</version>
     </dependency>
   
   	<dependency>
