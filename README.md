@@ -159,6 +159,18 @@ public class UserService {
 	      </init-param>
         </filter>
 	```
+####异常处理
+* 可读异常，通常用于处理用户输入错误等，使用com.github.catstiger.mvc.exception.ReadableException抛出。
+    * 请求json数据：渲染一个JSON，包括异常说明（message），异常标记(isFailed)等, 例如：
+    ```Java
+    {"errorCode":"-1","failed":true,"msg":"可读异常！"}
+    ```
+    * 请求html数据，以errorMessage为Attribute Name保存在Request中。
+    * 后台不会打印异常栈。
+    
+* 不可读异常，通常是系统错误造成，使用RuntimeException抛出
+    * 直接返回505错误，异常对象以"javax.servlet.error.exception"保存。
+    * 后台记录日志，并打印异常栈。
 ####自定义解析规则
 `@API`参数reolver指向一个ResponseResolver的实现类，即可实现自定义解析方式：
 ```Java
