@@ -64,10 +64,11 @@ public class MvcFilter implements Filter {
           Map<String, Object> cascadedMap = ValueMapUtils.inheritableParams(request.getParameterMap());
           value = ServiceInvoker.invoke(apiRes, cascadedMap); 
           resolver = ResolverFactory.getSuccessResolver(request);
-        } catch (Exception e) { //错误处理
+        } catch (Exception e) {
           resolver = ResolverFactory.getFailureResolver(request);
-          value = e;
-        }
+          value = e.getCause();
+        } 
+        
         //执行ResponseResolver
         if(resolver != null && resolver.getClass() != ResponseResolver.None.class) {
           resolver.resolve(request, response, apiRes, value);

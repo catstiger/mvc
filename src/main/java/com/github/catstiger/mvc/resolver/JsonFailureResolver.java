@@ -1,24 +1,33 @@
 package com.github.catstiger.mvc.resolver;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.config.ApiResource;
 
-public class JsonFailureResolver extends AbstractResponseResolver {
+public class JsonFailureResolver extends AbstractFailureResonseResolver {
+  
+  @Override
+  protected void handleReadableException(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, String string) {
+    JsonModel jsonModel = new JsonModel(JsonModel.ERROR_UNKNOWN, string);
+    String json = JSON.toJSONString(jsonModel);
+    logger.error(string);
+    renderJson(response, json);
+  }
 
   @Override
-  public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
-    String msg;
-    if(value != null && value instanceof Throwable) {
-      msg = ((Throwable) value).getMessage();
-    } else {
-      msg = (String) value;
+  protected void handleUnexpectException(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Throwable ex) {
+    logger.error(ex.getMessage());
+    ex.printStackTrace();
+    try {
+      request.setAttribute("javax.servlet.error.exception", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    JsonModel jsonModel = new JsonModel(JsonModel.ERROR_UNKNOWN, msg);
-    String json = JSON.toJSONString(jsonModel);
-    renderJson(response, json);
   }
 
 }

@@ -5,18 +5,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.github.catstiger.mvc.config.ApiResource;
 
-public class TextFailureResolver extends AbstractResponseResolver {
+public class TextFailureResolver extends AbstractFailureResonseResolver {
 
   @Override
-  public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
-    if(value != null) {
-      if(value instanceof Throwable) {
-        renderText(response, ((Throwable) value).getMessage());
-      } else {
-        renderText(response, (String) value);
-      }
-    } 
+  protected void handleReadableException(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, String string) {
+    renderText(response, string);
+    
+  }
 
+  @Override
+  protected void handleUnexpectException(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Throwable ex) {
+    renderText(response, ex.getMessage());
   }
 
 }

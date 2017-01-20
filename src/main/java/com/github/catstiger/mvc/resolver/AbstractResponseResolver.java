@@ -3,11 +3,16 @@ package com.github.catstiger.mvc.resolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.service.RequestParser;
 import com.github.catstiger.utils.WebUtils;
 
 public abstract class AbstractResponseResolver implements ResponseResolver {
+  protected Logger logger = LoggerFactory.getLogger(getClass());
+  
   protected static final String ATTR_NAME_COLLECTION = "list";
   protected static final String ATTR_NAME_PRIMITIVE = "data";
   

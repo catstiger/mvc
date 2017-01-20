@@ -12,9 +12,10 @@ public class JsonModel {
   public static final String ERROR_UNKNOWN = "-1";
   
   private String msg;
-  private Boolean successed = true;
+  
   private String errorCode = ERROR_NONE;
   private Object data;
+  private boolean failed = false;
   
   /**
    * 操作成功，构造一个用于渲染的操作成功的Model
@@ -29,7 +30,7 @@ public class JsonModel {
   public JsonModel(String errorMsg) {
     this.msg = errorMsg;
     this.errorCode = ERROR_UNKNOWN;
-    this.successed = false;
+    this.failed = true;
   }
   
   /**
@@ -40,7 +41,7 @@ public class JsonModel {
   public JsonModel(String errorCode, String errorMsg) {
     this.errorCode = errorCode;
     this.msg = errorMsg;
-    this.successed = false;
+    this.failed = (errorCode != ERROR_NONE);
   }
   
   /**
@@ -53,19 +54,7 @@ public class JsonModel {
   public void setMsg(String msg) {
     this.msg = msg;
   }
-  
-  /**
-   * 操作是否成功
-   * @return
-   */
-  public Boolean getSuccessed() {
-    return successed;
-  }
-  
-  public void setSuccessed(Boolean successed) {
-    this.successed = successed;
-  }
-  
+    
   /**
    * 错误代码
    */
@@ -85,5 +74,13 @@ public class JsonModel {
   
   public void setData(Object data) {
     this.data = data;
+  }
+
+  public boolean isFailed() {
+    return failed;
+  }
+
+  public void setFailed(boolean failed) {
+    this.failed = failed;
   }
 }
