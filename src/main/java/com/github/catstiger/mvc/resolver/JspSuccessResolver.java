@@ -36,13 +36,28 @@ import com.github.catstiger.utils.ReflectUtils;
  */
 public class JspSuccessResolver extends AbstractResponseResolver {
   
-  @SuppressWarnings("rawtypes")
   @Override
   public void resolve(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Object value) {
     String serviceUri = apiResource.getUri();
     String jsp = new StringBuilder(60).append(Initializer.getInstance().getPageFolder()).append(serviceUri)
         .append(Initializer.DEFAULT_TEMPLATE_SUFFIX_JSP).toString();
     
+    doRequestInternal(value, request);
+    
+    try {
+      request.getRequestDispatcher(jsp).forward(request, response);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  /**
+   * 将数据按照约定的规则，设置到HttpServletRequest对象中
+   * @param value 数据
+   * @param request ServletRequest
+   */
+  @SuppressWarnings("rawtypes")
+  protected void doRequestInternal(Object value, HttpServletRequest request) {
     if(value != null) {
       if(value instanceof Collection || value.getClass().isArray()) {
         request.setAttribute(ATTR_NAME_COLLECTION, value);
@@ -70,12 +85,7 @@ public class JspSuccessResolver extends AbstractResponseResolver {
         }
       }
     }
-    
-    try {
-      request.getRequestDispatcher(jsp).forward(request, response);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
   }
-
 }
+
+
