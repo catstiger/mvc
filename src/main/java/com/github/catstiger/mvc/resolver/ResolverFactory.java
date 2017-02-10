@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.catstiger.mvc.annotation.API;
 import com.github.catstiger.mvc.config.ApiResHolder;
 import com.github.catstiger.mvc.config.ApiResource;
+import com.github.catstiger.mvc.config.Initializer;
 import com.github.catstiger.mvc.service.RequestParser;
 import com.github.catstiger.utils.ReflectUtils;
+import com.github.catstiger.utils.StringUtils;
 
 public final class ResolverFactory {
   private static Map<String, ResponseResolver> successResolverCache = new ConcurrentHashMap<String, ResponseResolver>(160);
@@ -26,6 +28,10 @@ public final class ResolverFactory {
   
   private static final ResponseResolver DEFAULT_TEXT_SUCCESS_RESOLVER = new TextSuccessResolver();
   private static final ResponseResolver DEFAULT_TEXT_FAILURE_RESOLVER = new TextFailureResolver();
+  
+  private static ResponseResolver DEFAULT_TEMPLATE_SUCCESS_RESOLVER = null;
+  private static ResponseResolver DEFAULT_TEMPLATE_FAILURE_RESOLVER = null;
+  
   public static final ResponseResolver NONE_RESOLVER = new ResponseResolver.None();
   
   
@@ -57,11 +63,18 @@ public final class ResolverFactory {
         }
       }
     }
-    //处理缺省Resolver
+    //处理缺省Resolver，JSON请求
     if(RequestParser.isJsonRequest(request)) {
       return DEFAULT_JSON_SUCCESS_RESOLVER;
     } 
+    //超文本请求，使用模板
     else if(RequestParser.isHypertextRequest(request)) {
+      //首先选取web.xml中定义的模板
+      ResponseResolver defaultResolver = getDefaultSuccessTemplateResolver();
+      if(defaultResolver != null) {
+        return defaultResolver;
+      } 
+      
       FreeMarkerResolver freemarkerResolver = FreeMarkerResolver.getInstance();
       //首先判断是否采用Freemarker
       if(freemarkerResolver.isSupported(apiResource)) {
@@ -70,6 +83,7 @@ public final class ResolverFactory {
         return DEFAULT_JSP_SUCCESS_RESOLVER;
       }
     } 
+    //普通的TEXT请求
     else if (RequestParser.isPlaintextRequest(request)) {
       return DEFAULT_TEXT_SUCCESS_RESOLVER;
     } 
@@ -77,6 +91,31 @@ public final class ResolverFactory {
       return NONE_RESOLVER;
     }
   }
+  
+  /**
+   * 返回缺省的模板请求Success解析器
+   * @return 如果没有在web.xml中用defaultSuccessTemplateResolver定义，则返回null
+   */
+  private static ResponseResolver getDefaultSuccessTemplateResolver() {
+    if(DEFAULT_TEMPLATE_SUCCESS_RESOLVER != null) {
+      return DEFAULT_TEMPLATE_SUCCESS_RESOLVER;
+    }
+    String resolver = Initializer.getInstance().getDefaultSuccessTemplateResolver();
+    if(StringUtils.isBlank(resolver)) {
+      return null;
+    }
+    Class<?> resolverClass;
+    try {
+      resolverClass = Class.forName(resolver, true, ResolverFactory.class.getClassLoader());
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+    DEFAULT_TEMPLATE_SUCCESS_RESOLVER = (ResponseResolver) ReflectUtils.instantiate(resolverClass);
+    return DEFAULT_TEMPLATE_SUCCESS_RESOLVER;
+  }
+  
+  
   
   /**
    * 创建处理500错误的ResponseResolver实例
@@ -87,6 +126,10 @@ public final class ResolverFactory {
       return DEFAULT_JSON_FAILURE_RESOLVER;
     } 
     else if(RequestParser.isHypertextRequest(request)) {
+      ResponseResolver defaultResolver = getDefaultFailureTemplateResolver();
+      if(defaultResolver != null) {
+        return defaultResolver;
+      }
       return DEFAULT_JSP_FAILURE_RESOLVER;
     }
     else if (RequestParser.isPlaintextRequest(request)) {
@@ -95,6 +138,25 @@ public final class ResolverFactory {
     else {
       return NONE_RESOLVER;
     }
+  }
+  
+  private static ResponseResolver getDefaultFailureTemplateResolver() {
+    if(DEFAULT_TEMPLATE_FAILURE_RESOLVER != null) {
+      return DEFAULT_TEMPLATE_FAILURE_RESOLVER;
+    }
+    String resolver = Initializer.getInstance().getDefaultFailureTemplateResolver();
+    if(StringUtils.isBlank(resolver)) {
+      return null;
+    }
+    Class<?> resolverClass;
+    try {
+      resolverClass = Class.forName(resolver, true, ResolverFactory.class.getClassLoader());
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+    DEFAULT_TEMPLATE_FAILURE_RESOLVER = (ResponseResolver) ReflectUtils.instantiate(resolverClass);
+    return DEFAULT_TEMPLATE_FAILURE_RESOLVER;
   }
   
   

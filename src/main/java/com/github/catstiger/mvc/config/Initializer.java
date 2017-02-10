@@ -30,6 +30,8 @@ import com.github.catstiger.mvc.service.ServiceProvider;
 import com.github.catstiger.utils.StringUtils;
 @Component
 public final class Initializer {
+  
+
   private static Logger logger = LoggerFactory.getLogger(Initializer.class);
   /**
    * MvcServlet初始化的时候，需要配置scan_package,用于定义Service扫描basePackage
@@ -85,6 +87,17 @@ public final class Initializer {
   public static final String INIT_PARAM_PAGE_FOLDER = "pageFolder";
   public static final String DEFAULT_PAGE_FOLDER = "/WEB-INF/views";
   
+  /**
+   * 缺省的解析成功请求的Resolver，仅限于模板请求，即后缀为html,htm,do,action
+   */
+  public static final String INIT_SUCCESS_TEMPLATE_RESOLVER = "defaultSuccessTemplateResolver";
+  public static final String DEFAULT_SUCCESS_TEMPLATE_RESOLVER = "com.github.catstiger.mvc.resolver.JspSuccessResolver";
+  /**
+   * 缺省的解析失败请求的Resolver，仅限于模板请求，即后缀为html,htm,do,action
+   */
+  public static final String INIT_FAILURE_TEMPLATE_RESOLVER = "defaultFailureTemplateResolver";
+  public static final String DEFAULT_FAILURE_TEMPLATE_RESOLVER = "com.github.catstiger.mvc.resolver.JspFailureResolver";
+  
   private String dateFormat = DEFAULT_DATE_FORMAT;
   private String hourFormat = DEFAULT_HOUR_FORMAT;
   private String timeFormat = DEFAULT_TIME_FORMAT;
@@ -93,6 +106,8 @@ public final class Initializer {
   private String pageFolder = DEFAULT_PAGE_FOLDER;
   private String cacheSeconds = DEFAULT_CACHE_SEC;
   private String realPath;
+  private String defaultSuccessTemplateResolver;
+  private String defaultFailureTemplateResolver;
   
   private static Initializer instance = null;
 
@@ -173,6 +188,10 @@ public final class Initializer {
     if(StringUtils.isBlank(cacheSeconds)) {
       cacheSeconds = DEFAULT_CACHE_SEC;
     }
+    
+    defaultSuccessTemplateResolver = config.getInitParameter(INIT_SUCCESS_TEMPLATE_RESOLVER);
+    defaultFailureTemplateResolver = config.getInitParameter(INIT_FAILURE_TEMPLATE_RESOLVER);
+    
   }
   
   
@@ -440,6 +459,14 @@ public final class Initializer {
 
   public String getUriPrefix() {
     return uriPrefix;
+  }
+  
+  public String getDefaultSuccessTemplateResolver() {
+    return defaultSuccessTemplateResolver;
+  }
+
+  public String getDefaultFailureTemplateResolver() {
+    return defaultFailureTemplateResolver;
   }
 
   /**
