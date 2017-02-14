@@ -247,14 +247,15 @@ public final class Initializer {
       
       ApiResource apiRes = new ApiResource();
       apiRes.setMethod(method);
-      //apiRes.setMethod(null);
       apiRes.setMethodName(method.getName());
       apiRes.setProviderType((isSpringBean(clazz)) ? ServiceProvider.SERVICE_PROVIDER_SPRING : ServiceProvider.SERVICE_PROVIDER_CREATE);
       apiRes.setServiceId(serviceId);
       apiRes.setSingleton(isSingleton);
       apiRes.setUriPrefix(uriPrefix);
       apiRes.setUriSufix(uriSuffix);
-      apiRes.setUri(uriPrefix + uriSuffix);
+      
+      String uri = uriPrefix + uriSuffix;
+      apiRes.setUri(uri);
       
       apiReses.add(apiRes);
     }

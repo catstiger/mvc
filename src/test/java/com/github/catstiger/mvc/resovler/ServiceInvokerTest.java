@@ -13,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.github.catstiger.mvc.AbstractTestCase;
@@ -69,6 +70,11 @@ public class ServiceInvokerTest extends AbstractTestCase {
     assertNotNull(json);
   }
   
+  @Test
+  public void testRootBean() {
+    ApiResource api = ApiResHolder.getInstance().getApiResource("/index");
+    Assert.notNull(api);
+  }
   
   @Test
   public void testSingleBean() {

@@ -39,6 +39,9 @@ public final class ApiResHolder {
     if(serviceId.endsWith("/")) {
       serviceId = StringUtils.removeRight(serviceId, "/");
     }
+    if(!serviceId.startsWith("/")) {
+      serviceId = "/" + serviceId;
+    }
     
     if(apiMapping.containsKey(serviceId)) { //直接根据URI返回对应的ApiResource对象
       return apiMapping.get(serviceId);
