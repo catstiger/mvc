@@ -255,6 +255,9 @@ public final class Initializer {
       apiRes.setUriSufix(uriSuffix);
       
       String uri = uriPrefix + uriSuffix;
+      if(!uri.startsWith("/")) {
+        uri = "/" + uri;
+      }
       apiRes.setUri(uri);
       
       apiReses.add(apiRes);
