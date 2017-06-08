@@ -162,7 +162,7 @@
       <repository>
 					<id>Honqun Nexus</id>
 					<name>Honqun Repository</name>
-					<url>http://115.28.55.60:8081/nexus/content/groups/public/</url>
+					<url>http://118.190.74.38:8081/nexus/content/groups/public/</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
@@ -171,7 +171,7 @@
 		  <repository>
 					<id>Honqun Nexus 3dp</id>
 					<name>Honqun Repository 3dp</name>
-					<url>http://115.28.55.60:8081/nexus/content/repositories/thirdparty/</url>			
+					<url>http://118.190.74.38:8081/nexus/content/repositories/thirdparty/</url>			
 		  </repository>
   </repositories>
   <organization>
