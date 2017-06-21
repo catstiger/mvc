@@ -65,6 +65,7 @@ public class MvcFilter implements Filter {
           value = ServiceInvoker.invoke(apiRes, cascadedMap); 
           resolver = ResolverFactory.getSuccessResolver(request);
         } catch (Exception e) {
+          e.printStackTrace();
           resolver = ResolverFactory.getFailureResolver(request);
           value = e.getCause();
         } 
