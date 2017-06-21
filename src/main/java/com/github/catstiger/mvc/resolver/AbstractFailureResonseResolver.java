@@ -24,6 +24,7 @@ public abstract class AbstractFailureResonseResolver extends AbstractResponseRes
         handleReadableException(request, response, apiResource, value.toString());
       }
     } else {
+      logger.error(apiResource.toString());
       handleReadableException(request, response, apiResource, "未知错误！");
     } 
   }
