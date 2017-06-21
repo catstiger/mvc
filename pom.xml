@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.catstiger</groupId>
   <artifactId>catstiger-mvc</artifactId>
-  <version>0.1.26</version>
+  <version>0.1.27</version>
   <build>
     <plugins>
       <plugin>
