@@ -3,6 +3,8 @@ package com.github.catstiger.mvc.model;
 import java.util.Date;
 
 public class Student extends BaseModel {
+  private static final long serialVersionUID = 4593294154560739359L;
+ 
   private String name;
   private String sex;
   private Date birth;

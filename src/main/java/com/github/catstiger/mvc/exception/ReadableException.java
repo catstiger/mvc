@@ -6,6 +6,7 @@ package com.github.catstiger.mvc.exception;
  *
  */
 public class ReadableException extends RuntimeException {
+  private static final long serialVersionUID = 8628944672585548549L;
 
   public ReadableException(String message, Throwable cause) {
     super(message, cause);

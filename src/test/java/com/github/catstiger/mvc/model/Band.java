@@ -1,6 +1,8 @@
 package com.github.catstiger.mvc.model;
 
 public class Band extends BaseModel {
+  private static final long serialVersionUID = 3472947278202654657L;
+ 
   private String name;
   private String descn;
 

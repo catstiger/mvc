@@ -12,6 +12,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -26,6 +28,7 @@ import com.github.catstiger.utils.RequestUtils;
 import com.github.catstiger.utils.ValueMapUtils;
 
 public class MvcFilter implements Filter {
+  private static Logger logger = LoggerFactory.getLogger(MvcFilter.class);
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -65,7 +68,9 @@ public class MvcFilter implements Filter {
           value = ServiceInvoker.invoke(apiRes, cascadedMap); 
           resolver = ResolverFactory.getSuccessResolver(request);
         } catch (Exception e) {
-          e.printStackTrace();
+          if(logger.isInfoEnabled()) {
+            e.printStackTrace();
+          }
           resolver = ResolverFactory.getFailureResolver(request);
           value = e.getCause();
         } 
