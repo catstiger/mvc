@@ -45,6 +45,10 @@ public class BeanValueConverter implements ValueConverter<Object> {
     PropertyDescriptor[] propertyDescs = ReflectUtils.getPropertyDescriptors(targetType);
     
     for(PropertyDescriptor propDesc : propertyDescs) {
+      if(propDesc == null) {
+        logger.warn("A Property Descriptor of {} is null.", targetType.getSimpleName());
+        continue;
+      }
       if("class".equals(propDesc.getName())) {
         continue;
       }  
