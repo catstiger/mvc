@@ -17,7 +17,9 @@ public abstract class AbstractFailureResonseResolver extends AbstractResponseRes
       } 
       else if (value instanceof Throwable) { //如果不是可读异常，则发送505错误
         Throwable ex = (Throwable) value;
-        ex.printStackTrace();
+        if(logger.isInfoEnabled()) {
+          ex.printStackTrace();
+        }
         handleUnexpectException(request, response, apiResource, ex);
       } 
       else {

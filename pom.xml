@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.catstiger</groupId>
   <artifactId>catstiger-mvc</artifactId>
-  <version>0.1.30</version>
+  <version>0.1.31</version>
   <build>
     <plugins>
       <plugin>
@@ -21,8 +21,7 @@
         <artifactId>catstiger-utils</artifactId>
         <version>0.1.15</version>
     </dependency>
-  
-  	<dependency>
+    <dependency>
   		<groupId>org.slf4j</groupId>
   		<artifactId>slf4j-api</artifactId>
   		<version>1.7.16</version>
@@ -81,7 +80,7 @@
   	<dependency>
   		<groupId>com.google.guava</groupId>
   		<artifactId>guava</artifactId>
-  		<version>20.0</version>
+  		<version>22.0</version>
   	</dependency>
   	
   	<dependency>

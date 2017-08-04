@@ -21,7 +21,9 @@ public class JsonFailureResolver extends AbstractFailureResonseResolver {
   @Override
   protected void handleUnexpectException(HttpServletRequest request, HttpServletResponse response, ApiResource apiResource, Throwable ex) {
     logger.error(ex.getMessage());
-    ex.printStackTrace();
+    if(logger.isInfoEnabled()) {
+      ex.printStackTrace();
+    }
     try {
       request.setAttribute("javax.servlet.error.exception", ex);
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
