@@ -21,6 +21,7 @@ import javax.servlet.FilterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -270,12 +271,23 @@ public final class Initializer {
     
   
   private Boolean isSpringBean(Class<?> clazz) {
-    return (clazz != null && (clazz.isAnnotationPresent(Component.class) ||clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Repository.class)));
+    if(clazz == null) {
+      return false;
+    }
+    
+    return (clazz.isAnnotationPresent(Controller.class) || clazz.isAnnotationPresent(Component.class) 
+        ||clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Repository.class));
   }
   
   private String getServiceId(Class<?> clazz) {
     String serviceId = null;
-    if(clazz.isAnnotationPresent(Component.class)) {
+    if(clazz.isAnnotationPresent(Controller.class)) {
+      Controller comAnn = clazz.getAnnotation(Controller.class);
+      serviceId = comAnn.value();
+      if(StringUtils.isBlank(serviceId)) {
+        serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
+      }
+    } else if(clazz.isAnnotationPresent(Component.class)) {
       Component comAnn = clazz.getAnnotation(Component.class);
       serviceId = comAnn.value();
       if(StringUtils.isBlank(serviceId)) {
