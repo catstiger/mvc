@@ -5,8 +5,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.catstiger.utils.StringUtils;
+import org.springframework.util.StringUtils;
 
 public final class ApiResHolder {
   private static Logger logger = LoggerFactory.getLogger(ApiResHolder.class);
@@ -19,7 +18,7 @@ public final class ApiResHolder {
       return;
     }  
     
-    if(StringUtils.isBlank(apiResource.getUri())) {
+    if(!StringUtils.hasText(apiResource.getUri())) {
       logger.warn("URI is null, ignored");
       return;
     }
@@ -32,12 +31,12 @@ public final class ApiResHolder {
   }
   
   public ApiResource getApiResource(String serviceId) {
-    if(StringUtils.isBlank(serviceId)) {
+    if(!StringUtils.hasText(serviceId)) {
       logger.debug("Required uri is blank.");
       return null;
     }
     if(serviceId.endsWith("/")) {
-      serviceId = StringUtils.removeRight(serviceId, "/");
+      serviceId = serviceId.substring(0, serviceId.length() - 1);
     }
     if(!serviceId.startsWith("/")) {
       serviceId = "/" + serviceId;

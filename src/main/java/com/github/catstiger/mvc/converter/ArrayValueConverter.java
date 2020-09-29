@@ -2,7 +2,7 @@ package com.github.catstiger.mvc.converter;
 
 import java.lang.reflect.Array;
 
-import com.github.catstiger.utils.ClassUtils;
+import org.springframework.util.ClassUtils;
 
 
 /**
@@ -35,7 +35,7 @@ public class ArrayValueConverter implements ValueConverter<Object> {
     
     Class<?> componentType = elementType;
     if(elementType.isPrimitive()) { //原始数据类型使用包装类来获取转换器
-      componentType = ClassUtils.primitiveToWrapper(elementType);
+      componentType = ClassUtils.resolvePrimitiveIfNecessary(elementType);
     }
     ValueConverter<?> valueConverter = ConverterFactory.getConverter(componentType);
     Object results = Array.newInstance(elementType, array.length);

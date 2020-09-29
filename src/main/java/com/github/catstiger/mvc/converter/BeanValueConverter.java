@@ -8,10 +8,11 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.cglib.core.ReflectUtils;
+import org.springframework.util.ClassUtils;
 
-import com.github.catstiger.utils.ClassUtils;
 import com.github.catstiger.utils.GenericsUtils;
-import com.github.catstiger.utils.ReflectUtils;
 
 public class BeanValueConverter implements ValueConverter<Object> {
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -35,14 +36,14 @@ public class BeanValueConverter implements ValueConverter<Object> {
       return null;
     }
     
-    if(!ClassUtils.isAssignable(value.getClass(), Map.class, false)) {
+    if(!ClassUtils.isAssignable(value.getClass(), Map.class)) {
       return null;
     }
     
-    Object result = ReflectUtils.instantiate(targetType);// targetType.newInstance();
+    Object result = ReflectUtils.newInstance(targetType);// targetType.newInstance();
     
     Map<String, Object> valueMap = (Map<String, Object>) value;
-    PropertyDescriptor[] propertyDescs = ReflectUtils.getPropertyDescriptors(targetType);
+    PropertyDescriptor[] propertyDescs = BeanUtils.getPropertyDescriptors(targetType);
     
     for(PropertyDescriptor propDesc : propertyDescs) {
       if(propDesc == null) {

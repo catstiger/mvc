@@ -16,11 +16,7 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-        <groupId>com.github.catstiger</groupId>
-        <artifactId>catstiger-utils</artifactId>
-        <version>0.1.15</version>
-    </dependency>
+    
     <dependency>
   		<groupId>org.slf4j</groupId>
   		<artifactId>slf4j-api</artifactId>
@@ -164,19 +160,10 @@
   
   <repositories>
       <repository>
-					<id>Honqun Nexus</id>
-					<name>Honqun Repository</name>
-					<url>http://118.190.74.38:8081/nexus/content/groups/public/</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-		  </repository>
-		
-		  <repository>
-					<id>Honqun Nexus 3dp</id>
-					<name>Honqun Repository 3dp</name>
-					<url>http://118.190.74.38:8081/nexus/content/repositories/thirdparty/</url>			
-		  </repository>
+			<id>alimaven</id>
+			<name>aliyun maven</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+	  </repository>
   </repositories>
   <organization>
   	<name>Honqun.org</name>

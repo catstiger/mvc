@@ -24,11 +24,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.github.catstiger.mvc.annotation.API;
 import com.github.catstiger.mvc.annotation.Domain;
 import com.github.catstiger.mvc.service.ServiceProvider;
-import com.github.catstiger.utils.StringUtils;
 @Component
 public final class Initializer {
   
@@ -127,7 +127,7 @@ public final class Initializer {
    * @param basePackage 给出base package,如果为空字符串或者<code>null</code>，则采用缺省包名{@value #DEFAULT_BASE_PACKAGE}
    */
   public void loadApiResources(String basePackage) {
-    if (StringUtils.isBlank(basePackage)) {
+    if (!StringUtils.hasText(basePackage)) {
       basePackage = DEFAULT_BASE_PACKAGE;
     }
     logger.debug("Base package {}", basePackage);
@@ -156,37 +156,37 @@ public final class Initializer {
     realPath = config.getServletContext().getRealPath("");
     
     dateFormat = config.getInitParameter(INIT_PARAM_DATE_FORMAT);
-    if(StringUtils.isBlank(dateFormat)) {
+    if(!StringUtils.hasText(dateFormat)) {
       dateFormat = DEFAULT_DATE_FORMAT;
     }
     
     hourFormat = config.getInitParameter(INIT_PARAM_HOUR_FORMAT);
-    if(StringUtils.isBlank(hourFormat)) {
+    if(!StringUtils.hasText(hourFormat)) {
       hourFormat = DEFAULT_HOUR_FORMAT;
     }
     
     timeFormat = config.getInitParameter(INIT_PARAM_TIME_FORMAT);
-    if(StringUtils.isBlank(timeFormat)) {
+    if(!StringUtils.hasText(timeFormat)) {
       timeFormat = DEFAULT_TIME_FORMAT;
     }
     
     minuteFormat = config.getInitParameter(INIT_PARAM_MINUTE_FORMAT);
-    if(StringUtils.isBlank(minuteFormat)) {
+    if(!StringUtils.hasText(minuteFormat)) {
       minuteFormat = DEFAULT_MINUTE_FORMAT;
     }
     
     uriPrefix = config.getInitParameter(INIT_PARAM_URI_PREFIX);
-    if(StringUtils.isBlank(uriPrefix)) {
+    if(!StringUtils.hasText(uriPrefix)) {
       uriPrefix = DEFAULT_URI_PREFIX;
     }
     
     pageFolder = config.getInitParameter(INIT_PARAM_PAGE_FOLDER);
-    if(StringUtils.isBlank(pageFolder)) {
+    if(!StringUtils.hasText(pageFolder)) {
       pageFolder = DEFAULT_PAGE_FOLDER;
     }
     
     cacheSeconds = config.getInitParameter(INIT_PARAM_CACHE_SEC);
-    if(StringUtils.isBlank(cacheSeconds)) {
+    if(!StringUtils.hasText(cacheSeconds)) {
       cacheSeconds = DEFAULT_CACHE_SEC;
     }
     
@@ -207,14 +207,14 @@ public final class Initializer {
     }
     
     String serviceId = getServiceId(clazz); //服务ID，Spring注解的beanId或者全限定类名
-    if(StringUtils.isBlank(serviceId)) {
+    if(!StringUtils.hasText(serviceId)) {
       return Collections.emptyList();
     }
     
     Boolean isSingleton = (!isSpringBean(clazz) && domainAnnotaion.singleton());
     String uriPrefix = domainAnnotaion.value(); //如果Aai定义了URI前缀，那么使用Api定义的
     
-    if(StringUtils.isBlank(uriPrefix)) { //如果没有定义，则根据serviceId或者类名确定URL
+    if(!StringUtils.hasText(uriPrefix)) { //如果没有定义，则根据serviceId或者类名确定URL
       if(isSpringBean(clazz)) {
         uriPrefix = "/" + StringUtils.toSnakeCase(serviceId.replaceAll("\\\\|/", " "));
       } else {
@@ -236,7 +236,7 @@ public final class Initializer {
       }
       
       String uriSuffix = apiAnnotation.value(); //如果Aai定义了URI后缀，那么使用Api定义的
-      if(StringUtils.isBlank(uriSuffix)) {
+      if(!StringUtils.hasText(uriSuffix)) {
         uriSuffix = "/" + StringUtils.toSnakeCase(method.getName());
       }
       if(!uriSuffix.startsWith("/")) {
@@ -284,25 +284,25 @@ public final class Initializer {
     if(clazz.isAnnotationPresent(Controller.class)) {
       Controller comAnn = clazz.getAnnotation(Controller.class);
       serviceId = comAnn.value();
-      if(StringUtils.isBlank(serviceId)) {
+      if(!StringUtils.hasText(serviceId)) {
         serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     } else if(clazz.isAnnotationPresent(Component.class)) {
       Component comAnn = clazz.getAnnotation(Component.class);
       serviceId = comAnn.value();
-      if(StringUtils.isBlank(serviceId)) {
+      if(!StringUtils.hasText(serviceId)) {
         serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     } else if (clazz.isAnnotationPresent(Service.class)) {
       Service svrAnn = clazz.getAnnotation(Service.class);
       serviceId = svrAnn.value();
-      if(StringUtils.isBlank(serviceId)) {
+      if(!StringUtils.hasText(serviceId)) {
         serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     } else if (clazz.isAnnotationPresent(Repository.class)) {
       Repository respAnn = clazz.getAnnotation(Repository.class);
       serviceId = respAnn.value();
-      if(StringUtils.isBlank(serviceId)) {
+      if(!StringUtils.hasText(serviceId)) {
         serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     }
