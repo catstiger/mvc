@@ -21,7 +21,6 @@ import javax.servlet.FilterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -271,16 +270,12 @@ public final class Initializer {
     
   
   private Boolean isSpringBean(Class<?> clazz) {
-    if(clazz == null) {
-      return false;
-    }
-    
-    return (clazz.isAnnotationPresent(Controller.class) || clazz.isAnnotationPresent(Component.class) 
-        ||clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Repository.class));
+    return (clazz != null && (clazz.isAnnotationPresent(Component.class) ||clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Repository.class)));
   }
   
   private String getServiceId(Class<?> clazz) {
     String serviceId = null;
+<<<<<<< master
     if(clazz.isAnnotationPresent(Controller.class)) {
       Controller comAnn = clazz.getAnnotation(Controller.class);
       serviceId = comAnn.value();
@@ -288,6 +283,9 @@ public final class Initializer {
         serviceId = StringUtils.toCamelCase(clazz.getSimpleName());
       }
     } else if(clazz.isAnnotationPresent(Component.class)) {
+=======
+    if(clazz.isAnnotationPresent(Component.class)) {
+>>>>>>> 15cb458 支持@Controller
       Component comAnn = clazz.getAnnotation(Component.class);
       serviceId = comAnn.value();
       if(!StringUtils.hasText(serviceId)) {
